@@ -5,13 +5,29 @@
   
   <title>pwntools调试命令集合 | √素顏☃繁華夢☪</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。
+0x1 编译文章中用到的test都是文件名
+12gcc test.c -0 test  gcc -fno-stack-protector -z execstack -o test test.c
+使用这条命令编译程序，-fno-stack-protector和-z execstack这两个参数会分别关掉DEP和St">
+<meta property="og:type" content="article">
 <meta property="og:title" content="pwntools调试命令集合">
-<meta property="og:url" content="http://yoursite.com/2018/04/01/pwntools调试命令集合/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/index.html">
 <meta property="og:site_name" content="√素顏☃繁華夢☪">
-<meta property="og:updated_time" content="2018-04-01T07:16:49.062Z">
+<meta property="og:description" content="之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。
+0x1 编译文章中用到的test都是文件名
+12gcc test.c -0 test  gcc -fno-stack-protector -z execstack -o test test.c
+使用这条命令编译程序，-fno-stack-protector和-z execstack这两个参数会分别关掉DEP和St">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/58.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/59.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/60.png">
+<meta property="og:updated_time" content="2018-04-01T07:49:20.235Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwntools调试命令集合">
+<meta name="twitter:description" content="之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。
+0x1 编译文章中用到的test都是文件名
+12gcc test.c -0 test  gcc -fno-stack-protector -z execstack -o test test.c
+使用这条命令编译程序，-fno-stack-protector和-z execstack这两个参数会分别关掉DEP和St">
+<meta name="twitter:image" content="http://ote495tnr.bkt.clouddn.com/58.png">
   
     <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
   
@@ -64,9 +80,9 @@
   </div>
 </div>
 
-        <section id="main"><article id="post-pwntools调试命令集合" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-pwntools调试命令集合QAQ" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/04/01/pwntools调试命令集合/" class="article-date">
+    <a href="/2018/04/01/pwntools调试命令集合QAQ/" class="article-date">
   <time class="post-time" datetime="2018-04-01T02:29:09.000Z" itemprop="datePublished">
     <span class="post-month">4月</span><br/>
     <span class="post-day">01</span>
@@ -96,13 +112,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <!--more>
-
-之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。
-
-#### 0x1 编译
-文章中用到的test都是文件名
-
+        <p>之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。</p>
+<h4 id="0x1-编译"><a href="#0x1-编译" class="headerlink" title="0x1 编译"></a>0x1 编译</h4><p>文章中用到的test都是文件名</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gcc test.c -0 test  </div><div class="line">gcc -fno-stack-protector -z execstack -o test test.c</div></pre></td></tr></table></figure>
 <p>使用这条命令编译程序，<code>-fno-stack-protector</code>和<code>-z execstack</code>这两个参数会分别关掉DEP和Stack Protestor。</p>
 <h4 id="0x2-gdb调试技巧"><a href="#0x2-gdb调试技巧" class="headerlink" title="0x2 gdb调试技巧"></a>0x2 gdb调试技巧</h4><ol>
@@ -149,11 +160,11 @@
 <p><img src="http://ote495tnr.bkt.clouddn.com/59.png" alt=""></p>
 <p><img src="http://ote495tnr.bkt.clouddn.com/60.png" alt=""></p>
 <p>.bss段是用来保存全局变量的值，地址固定，并且可以读可写，可以通过如下的命令获取.bss段的地址。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$ readelf -S test</div><div class="line">....</div><div class="line">[23] .got              PROGBITS        08049ffc 000ffc 000004 04  WA  0   0  4</div><div class="line">  [24] .got.plt          PROGBITS        0804a000 001000 000018 04  WA  0   0  4</div><div class="line">  [25] .data             PROGBITS        0804a018 001018 000008 00  WA  0   0  4</div><div class="line">  [26] .bss              NOBITS          0804a020 001020 000004 00  WA  0   0  1</div><div class="line">  [27] .comment          PROGBITS        00000000 001020 000034 01  MS  0   0  1</div><div class="line">  [28] .shstrtab         STRTAB          00000000 001054 0000fa 00      0   0  1</div><div class="line">Key to Flags:</div><div class="line">  W (write), A (alloc), X (execute), M (merge), S (strings)</div><div class="line">  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)</div><div class="line">  O (extra OS processing required) o (OS specific), p (processor specific)</div><div class="line">....</div></pre></td></tr></table></figure></p>
--->
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合/" data-id="cjfghrkme0006w0un9yo4rjal" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/" data-id="cjfgi9ca500068cunvj1lzbjz" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
@@ -166,7 +177,7 @@
   
   
     <a href="/2017/12/10/西普杯2017年网络安全技能赛-writeup/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">Ancien</strong>
       <div class="article-nav-title">西普杯2017年网络安全技能赛 writeup</div>
     </a>
   

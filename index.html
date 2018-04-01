@@ -68,9 +68,9 @@
 
         <section id="main">
   
-    <article id="post-pwntools调试命令集合" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-pwntools调试命令集合QAQ" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/04/01/pwntools调试命令集合/" class="article-date">
+    <a href="/2018/04/01/pwntools调试命令集合QAQ/" class="article-date">
   <time class="post-time" datetime="2018-04-01T02:29:09.000Z" itemprop="datePublished">
     <span class="post-month">4月</span><br/>
     <span class="post-day">01</span>
@@ -85,7 +85,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/01/pwntools调试命令集合/">pwntools调试命令集合</a>
+      <a class="article-title" href="/2018/04/01/pwntools调试命令集合QAQ/">pwntools调试命令集合</a>
     </h1>
   
 
@@ -100,13 +100,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <!--more>
-
-之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。
-
-#### 0x1 编译
-文章中用到的test都是文件名
-
+        <p>之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。</p>
+<h4 id="0x1-编译"><a href="#0x1-编译" class="headerlink" title="0x1 编译"></a>0x1 编译</h4><p>文章中用到的test都是文件名</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gcc test.c -0 test  </div><div class="line">gcc -fno-stack-protector -z execstack -o test test.c</div></pre></td></tr></table></figure>
 <p>使用这条命令编译程序，<code>-fno-stack-protector</code>和<code>-z execstack</code>这两个参数会分别关掉DEP和Stack Protestor。</p>
 <h4 id="0x2-gdb调试技巧"><a href="#0x2-gdb调试技巧" class="headerlink" title="0x2 gdb调试技巧"></a>0x2 gdb调试技巧</h4><ol>
@@ -153,11 +148,11 @@
 <p><img src="http://ote495tnr.bkt.clouddn.com/59.png" alt=""></p>
 <p><img src="http://ote495tnr.bkt.clouddn.com/60.png" alt=""></p>
 <p>.bss段是用来保存全局变量的值，地址固定，并且可以读可写，可以通过如下的命令获取.bss段的地址。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$ readelf -S test</div><div class="line">....</div><div class="line">[23] .got              PROGBITS        08049ffc 000ffc 000004 04  WA  0   0  4</div><div class="line">  [24] .got.plt          PROGBITS        0804a000 001000 000018 04  WA  0   0  4</div><div class="line">  [25] .data             PROGBITS        0804a018 001018 000008 00  WA  0   0  4</div><div class="line">  [26] .bss              NOBITS          0804a020 001020 000004 00  WA  0   0  1</div><div class="line">  [27] .comment          PROGBITS        00000000 001020 000034 01  MS  0   0  1</div><div class="line">  [28] .shstrtab         STRTAB          00000000 001054 0000fa 00      0   0  1</div><div class="line">Key to Flags:</div><div class="line">  W (write), A (alloc), X (execute), M (merge), S (strings)</div><div class="line">  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)</div><div class="line">  O (extra OS processing required) o (OS specific), p (processor specific)</div><div class="line">....</div></pre></td></tr></table></figure></p>
--->
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合/" data-id="cjfghrkme0006w0un9yo4rjal" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/" data-id="cjfgi9ca500068cunvj1lzbjz" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
@@ -236,7 +231,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfghrknf000rw0untxee1smg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfgi9cbl000p8cunmlotoxan" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -318,7 +313,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfghrklt0000w0unrbhah070" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfgi9c9700008cunlqxdzokn" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -399,7 +394,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfghrkmh0007w0un26mu39vi" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfgi9car000a8cun2anknxhq" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -471,7 +466,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfghrkma0005w0unom6z9sxk" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfgi9ca000058cuniyfco12b" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安装教程/">安装教程</a></li></ul>
@@ -570,7 +565,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfghrkmq000aw0unqpqyf1px" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfgi9ca800078cunyeipcp56" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -625,7 +620,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfghrkmv000gw0unf918cs7m" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfgi9cb2000g8cun3cvghv7c" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-format/">pwn,format</a></li></ul>
@@ -680,7 +675,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfghrkmu000ew0une8aij217" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfgi9cc1000r8cunw0musymh" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn，format/">pwn，format</a></li></ul>
@@ -735,7 +730,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfghrkms000bw0unb3oa1crr" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfgi9cav000b8cunjygsaiwx" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -790,7 +785,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/19/XMAN-CTF-2017/" data-id="cjfghrkm10002w0unq8u2tmlz" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/07/19/XMAN-CTF-2017/" data-id="cjfgi9c9o00028cunm1uihn8m" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
