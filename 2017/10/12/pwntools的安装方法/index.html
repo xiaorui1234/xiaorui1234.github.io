@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>pwntools的安装方法 | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近学习pwn，配置了32位和64位的pwntools环境，配置过程中虽然参考了别人的博客，但还是遇到了一些问题，总结下安装的过程便于以后的学习。
+pwntools是一个CTF框架和漏洞利用开发库，用python开发，由rapid设计，旨在让使用者简单快速的编写exploit。
+我自己安装的时候，将kali64,32;ubuntu64,32都安装了一遍。总的来说还是比较顺利的，在安装有的工具的时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwntools的安装方法">
+<meta property="og:url" content="http://yoursite.com/2017/10/12/pwntools的安装方法/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="最近学习pwn，配置了32位和64位的pwntools环境，配置过程中虽然参考了别人的博客，但还是遇到了一些问题，总结下安装的过程便于以后的学习。
+pwntools是一个CTF框架和漏洞利用开发库，用python开发，由rapid设计，旨在让使用者简单快速的编写exploit。
+我自己安装的时候，将kali64,32;ubuntu64,32都安装了一遍。总的来说还是比较顺利的，在安装有的工具的时">
+<meta property="og:updated_time" content="2017-10-12T11:11:47.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pwntools的安装方法">
+<meta name="twitter:description" content="最近学习pwn，配置了32位和64位的pwntools环境，配置过程中虽然参考了别人的博客，但还是遇到了一些问题，总结下安装的过程便于以后的学习。
+pwntools是一个CTF框架和漏洞利用开发库，用python开发，由rapid设计，旨在让使用者简单快速的编写exploit。
+我自己安装的时候，将kali64,32;ubuntu64,32都安装了一遍。总的来说还是比较顺利的，在安装有的工具的时">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-pwntools的安装方法" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/12/pwntools的安装方法/" class="article-date">
+  <time class="post-time" datetime="2017-10-12T10:25:49.000Z" itemprop="datePublished">
+    <span class="post-month">10月</span><br/>
+    <span class="post-day">12</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      pwntools的安装方法
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<p>最近学习pwn，配置了32位和64位的pwntools环境，配置过程中虽然参考了别人的博客，但还是遇到了一些问题，总结下安装的过程便于以后的学习。</p>
+<p>pwntools是一个CTF框架和漏洞利用开发库，用python开发，由rapid设计，旨在让使用者简单快速的编写exploit。</p>
+<p>我自己安装的时候，将kali64,32;ubuntu64,32都安装了一遍。总的来说还是比较顺利的，在安装有的工具的时候可能会提示缺少某个安装模块（一般都是Python里的模块缺少），这时候通过<code>pip install module</code><br>就可以了，有的情况下需要更新源。现在开始安装教程吧。</p>
+<h4 id="1-安装Capstone"><a href="#1-安装Capstone" class="headerlink" title="1.安装Capstone"></a>1.安装Capstone</h4><p>Capstone disassembly/disassembler framework: Core (Arm, Arm64, M68K, Mips, PPC, Sparc, SystemZ, X86, X86_64, XCore) + bindings (Python, Java, Ocaml)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/aquynh/capstone</div><div class="line">cd capstone</div><div class="line">make</div><div class="line">make install</div></pre></td></tr></table></figure></p>
+<p>安装完这一步没什么错误就可以安装pwntools。</p>
+<h4 id="2-安装pwntools"><a href="#2-安装pwntools" class="headerlink" title="2.安装pwntools"></a>2.安装pwntools</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/Gallopsled/pwntools</div><div class="line">cd pwntools</div><div class="line">python setup.py install</div></pre></td></tr></table></figure>
+<p>如果没报错，并且终端输入python进入其交互模式后，输入import pwn回车后没报错，差不多就好了。</p>
+<p>这时候再尝试pwntools的asm功能:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; pwn.asm(&quot;xor eax,eax&quot;)</div><div class="line">&apos;1\xc0&apos;</div></pre></td></tr></table></figure></p>
+<p>如果不是模块错误，报其他的错可以参考这篇文章<a href="http://www.cnblogs.com/pcat/p/5451780.html" title="pwntools教程" target="_blank" rel="external">http://www.cnblogs.com/pcat/p/5451780.html</a>，我目前还没有遇到过。<br>安装完之后没有什么问题就可以开始配置练习pwn需要用到的环境了。</p>
+<h4 id="3-环境配置"><a href="#3-环境配置" class="headerlink" title="3.环境配置"></a>3.环境配置</h4><p>常用的工具：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">gcc: apt-get install gcc</div><div class="line">gcc-multilib: apt-get install gcc-multilib  #安装在64位的环境下，用它可以编译32位的程序  参数  -m32</div><div class="line">socat: apt-get install socat</div><div class="line">readelf: apt-get install readelf</div></pre></td></tr></table></figure></p>
+<ol>
+<li><p>安装pade<br>peda是gdb的一个插件，安装后大大提升gdb在分析逆向/溢出程序时的用户体验</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/longld/peda.git ~/peda</div><div class="line">echo &quot;source ~/peda/peda.py&quot; &gt;&gt;  /.gdbinit</div><div class="line">echo &quot;DONE! debug your program with gdb and enjoy&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>安装gadgets<br>比较有名的工具有以下几种，根据自己的习惯选择：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ROPEME: https://github.com/packz/ropeme</div><div class="line">Ropper: https://github.com/sashs/Ropper</div><div class="line">ROPgadget: https://github.com/JonathanSalwan/ROPgadget/tree/master</div><div class="line">rp++: https://github.com/0vercl0k/rp</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这里以 ROPgadget为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/JonathanSalwan/ROPgadget.git</div><div class="line">python setup.py install</div><div class="line">ROPgadget</div></pre></td></tr></table></figure></p>
+<p>或是以pip安装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!bash</div><div class="line">git clone https://github.com/JonathanSalwan/ROPgadget.git</div><div class="line">pip install ropgadget</div><div class="line">ROPgadget</div></pre></td></tr></table></figure></p>
+<p>学习过程中遇到的工具会继续更新的！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfgehm2c0002vgun386davbf" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安装教程/">安装教程</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/10/14/一步一步学ROP之x64篇/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          一步一步学ROP之x64篇
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/28/一步一步学ROP之x86篇/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">一步一步学ROP之x86篇</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

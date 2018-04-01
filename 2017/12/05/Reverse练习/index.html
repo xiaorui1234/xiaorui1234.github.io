@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Reverse练习 writeup | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="Reverse练习 writeup">
+<meta property="og:url" content="http://yoursite.com/2017/12/05/Reverse练习/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:updated_time" content="2017-12-07T09:24:51.291Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Reverse练习 writeup">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-Reverse练习" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/05/Reverse练习/" class="article-date">
+  <time class="post-time" datetime="2017-12-05T12:47:04.000Z" itemprop="datePublished">
+    <span class="post-month">12月</span><br/>
+    <span class="post-day">05</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Reverse练习 writeup
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!--more>
+
+#### 0x1 apk.apk
+反编译之后看java源码，涉及到的关键函数有点多，但是耐心的分析下代码程序的逻辑并不难，通过uc这个函数可以知道程序对“XRL}D6hy4yfE7tuF6{”这个字符串做了加密处理，下面这段程序就它的处理方法
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">public class cc</div><div class="line">&#123;</div><div class="line">  public static String encrypt(String paramString)</div><div class="line">  &#123;</div><div class="line">    String str = &quot;&quot;;</div><div class="line">    int i = 0;</div><div class="line">    if (i &gt;= paramString.length()) &#123;</div><div class="line">      return str;</div><div class="line">    &#125;</div><div class="line">    int j = paramString.charAt(i);</div><div class="line">    char c;</div><div class="line">    if ((j &gt;= 97) &amp;&amp; (j &lt;= 109)) &#123;</div><div class="line">      c = (char)(j + 13);</div><div class="line">    &#125;</div><div class="line">    for (;;)</div><div class="line">    &#123;</div><div class="line">      str = str + c;</div><div class="line">      i += 1;</div><div class="line">      break;</div><div class="line">      if ((j &gt;= 65) &amp;&amp; (j &lt;= 77)) &#123;</div><div class="line">        c = (char)(j + 13);</div><div class="line">      &#125; else if ((j &gt;= 110) &amp;&amp; (j &lt;= 122)) &#123;</div><div class="line">        c = (char)(j - 13);</div><div class="line">      &#125; else if ((j &gt;= 78) &amp;&amp; (j &lt;= 90)) &#123;</div><div class="line">        c = (char)(j - 13);</div><div class="line">      &#125; else if ((j &gt;= 48) &amp;&amp; (j &lt;= 57)) &#123;</div><div class="line">        c = (char)(j ^ 0x7);</div><div class="line">      &#125; else &#123;</div><div class="line">        c = (char)(j ^ 0x6);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>把这段算法逆向回去就能得到正确的flag：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">str=&apos;XRL&#125;D6hy4yfE7tuF6&#123;&apos;</div><div class="line">str1=&apos;&apos;</div><div class="line">flag=&apos;&apos;</div><div class="line">for i in range(len(str)):</div><div class="line">    if(ord(str[i])&gt;=97 and ord(str[i])&lt;=109):</div><div class="line">        str1=str1 + chr(ord(str[i])+13)</div><div class="line">    else:</div><div class="line">        str1=str1+str[i]</div><div class="line">for i in range(len(str1)):</div><div class="line">    if(ord(str1[i])&gt;=65 and ord(str1[i])&lt;=77):</div><div class="line">        flag=flag+chr(ord(str1[i])+13)</div><div class="line">    elif(ord(str1[i])&gt;=110 and ord(str1[i])&lt;=122):</div><div class="line">        flag = flag + chr(ord(str1[i]) - 13)</div><div class="line">    elif (ord(str1[i]) &gt;= 78 and ord(str1[i]) &lt;= 90):</div><div class="line">        flag = flag + chr(ord(str1[i]) - 13)</div><div class="line">    elif (ord(str1[i]) &gt;= 48 and ord(str1[i]) &lt;= 57):</div><div class="line">        flag = flag + chr(ord(str1[i]) ^ 7)</div><div class="line">    else:</div><div class="line">        flag = flag + chr(ord(str1[i]) ^ 6)</div><div class="line">print(flag)</div></pre></td></tr></table></figure>
+<p>最后得到的结果是：KEY{Q1hl3lfR0ghS1}</p>
+<h4 id="0x2-Win-exe"><a href="#0x2-Win-exe" class="headerlink" title="0x2 Win.exe"></a>0x2 Win.exe</h4><p>载入IDA分析，找到关键代码处然后分析算法：根据程序的逻辑可以看出来，flag由两部分组成，上部分是由byte_415767这个数组中的字符串组成，并且根据v9这个数组里的值取下标组成上半部分flag，下半部分flag可以直接得到：<code>1024}</code></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/40.png" alt=""></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/41.png" alt=""></p>
+<p>解密代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">str=&apos;sKfxEeft&#125;f&#123;gyrYgthtyhifsjei53UUrrr_t2cdsef66246087138\0087138&apos;</div><div class="line">list=[1,4,14,10,5,36,23,42,13,19,28,13,27,39,48,41,42]</div><div class="line">str1=&apos;1024&#125;&apos;</div><div class="line">flag=&apos;&apos;</div><div class="line">for i in list:</div><div class="line">    flag=flag+str[i]</div><div class="line">print(flag+str1)</div></pre></td></tr></table></figure></p>
+<p>运行后法人结果为：KEY{e2s6ry3r5s8f61024}</p>
+<h4 id="0x3-defcamp"><a href="#0x3-defcamp" class="headerlink" title="0x3 defcamp"></a>0x3 defcamp</h4><p>用IDA进行反汇编分析，找到关键代码，可以看到需要用户输入正确的password</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/42.png" alt=""></p>
+<p>函数sub_40074D是一个关键函数，里面有两个for循环，第一个for循环取qword_601080地址上的数据存入v6这个数组，第二个for循环是用v6和v9进行比较，数组v9的值为：<code>5 2 7 2 5 6</code></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/43.png" alt=""></p>
+<p>但是在主函数中的for循环里面也调用了qword_601080，经过分析可以知道：v3=109+v9[i],所以最后得到的结果为：<code>114 111 116 111 114 115</code>,password就是：<code>rotors</code></p>
+<h4 id="0x4-catalyst-system"><a href="#0x4-catalyst-system" class="headerlink" title="0x4 catalyst-system"></a>0x4 catalyst-system</h4><p>用IDA反汇编，得到如下的伪代码</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/44.png" alt=""></p>
+<p>需要输入username和password，下面5个自定义函数分别对username和password做了相应的处理</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/45.png" alt=""></p>
+<p>将12个字节长的usrname分成3个4字节的int型并做成了方程组:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">a−b+c=1550207830</div><div class="line">3a+3c+b=12465522610</div><div class="line">bc=3651346623716053780</div></pre></td></tr></table></figure></p>
+<p>最后解出：<code>a = 1635017059   b = 1953724780   c = 1868915551</code><br>即username：catalyst_ceo<br>继续分析sub_400977这个函数</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/46.png" alt=""></p>
+<p>v2这个数组里存的是password，这里v2是等于一个随机数加上一个已知的数得到的，随机数有固定的随机种子srand(a1)，a1是固定的所以产生的随机数也是固定的，这里可以写个C程序跑出来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdlib.h&gt;</div><div class="line">#include&lt;stdio.h&gt;</div><div class="line">int main() </div><div class="line">&#123;</div><div class="line">	srand(0x454d3e2e);</div><div class="line">	for (int i = 0;i &lt; 10;i++)</div><div class="line">	printf(&quot;%x\n&quot;, rand());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最后产生的10组数为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">0x684749</div><div class="line">0x673ce537</div><div class="line">0x7b4505e7</div><div class="line">0x70a0b262</div><div class="line">0x33d5253c</div><div class="line">0x515a7675</div><div class="line">0x596d7d5d</div><div class="line">0x7cd29049</div><div class="line">0x59e72db6</div><div class="line">0x4654600d</div></pre></td></tr></table></figure></p>
+<p>计算出password的值后跟数组byte_6020A0数组中的值进行异或<br><img src="http://ote495tnr.bkt.clouddn.com/47.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">import os</div><div class="line">import pwn</div><div class="line">usr=&quot;&quot;</div><div class="line">pwd=&quot;&quot;</div><div class="line">flag=&quot;&quot;</div><div class="line">a = 1635017059</div><div class="line">b = 1953724780</div><div class="line">c = 1868915551</div><div class="line">usr +=pwn.p32(a)+pwn.p32(b)+pwn.p32(c)</div><div class="line">rand = [0x684749, 0x673ce537, 0x7b4505e7, 0x70a0b262, 0x33d5253c, 0x515a7675, 0x596d7d5d, 0x7cd29049, 0x59e72db6, 0x4654600d] </div><div class="line">s=[1441465642,251096121,-870437532,-944322827,647240698,638382323,282381039,-966334428,-58112612,605226810]</div><div class="line">s2=[0x42, 0x13, 0x27, 0x62, 0x41, 0x35, 0x6B, 0x0F, 0x7B, 0x46, 0x3C, 0x3E, 0x67, 0x0C, 0x08, 0x59, 0x44, 0x72, 0x36, 0x05, 0x0F, 0x15, 0x54, 0x43, 0x38, 0x17, 0x1D, 0x18, 0x08, 0x0E, 0x5C, 0x31, 0x21, 0x16, 0x02, 0x09, 0x18, 0x14, 0x54, 0x59]</div><div class="line"></div><div class="line">for i, j in enumerate(rand):</div><div class="line">    print hex(s[i])</div><div class="line">    pwd += pwn.p32(j+s[i])</div><div class="line">print &quot;pwd:&quot;, pwd</div><div class="line"></div><div class="line">for i,j in zip(pwd,s2):</div><div class="line">    flag+=chr(ord(i)^j)</div><div class="line">print &quot;flag：&quot;,flag</div></pre></td></tr></table></figure>
+<p>最后得到的结果为：ALEXCTF{1_t41d_y0u_y0u_ar3<strong>gr34t</strong>reverser__s33}</p>
+-->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfgehm260000vgunkowjnp1d" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/12/10/西普杯2017年网络安全技能赛-writeup/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          西普杯2017年网络安全技能赛 writeup
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/10/14/一步一步学ROP之x64篇/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">一步一步学ROP之x64篇</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>缓冲区溢出 | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="缓冲区溢出攻击原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="缓冲区溢出">
+<meta property="og:url" content="http://yoursite.com/2017/03/29/缓冲区溢出/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="缓冲区溢出攻击原理">
+<meta property="og:image" content="http://i2.muimg.com/567571/f7e395a1b8a633a4.png">
+<meta property="og:image" content="http://i2.muimg.com/567571/a000eee20a04f635.png">
+<meta property="og:image" content="http://i2.muimg.com/567571/d5a898405afbc5e6.png">
+<meta property="og:image" content="http://i1.piimg.com/567571/b014337787e92964.png">
+<meta property="og:image" content="http://i1.piimg.com/567571/726601558406a944.png">
+<meta property="og:updated_time" content="2017-04-04T09:29:06.829Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="缓冲区溢出">
+<meta name="twitter:description" content="缓冲区溢出攻击原理">
+<meta name="twitter:image" content="http://i2.muimg.com/567571/f7e395a1b8a633a4.png">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-缓冲区溢出" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/29/缓冲区溢出/" class="article-date">
+  <time class="post-time" datetime="2017-03-29T09:58:52.000Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">29</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      缓冲区溢出
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="缓冲区溢出攻击原理"><a href="#缓冲区溢出攻击原理" class="headerlink" title="缓冲区溢出攻击原理"></a>缓冲区溢出攻击原理</h4><a id="more"></a>
+<p>缓冲区攻击指的是一种常见且危害很大的攻击手段，通过向程序的缓冲区写入超出其长度的内容，造成缓冲区的溢出，从而破坏程序的堆栈，使程序转而执行其他的指令，已达到攻击的目的。当正常的使用者操作程序的时候，所进行的的操作一般不会超出程序的运行范围，数据被添加到分配给该缓冲区的内存块之外，会发生缓冲区溢出，这时候会出现数据泄露或侵占了其他的数据空间。</p>
+<p>缓冲区溢出的攻击原理就是越过缓冲区长度界限向程序中输入超出其常规长度的内容，造成缓冲区的溢出从而破坏程序的堆栈，使程序运行出现特殊的问题转而执行其他指令。</p>
+<p>一般来说，简单的缓冲区溢出，并不会产生安全问题，如果将溢出送到能够以root权限或其他超级权限运行命令的区域去执行某些代码或者运行一个shell的时候，该程序就是以超级用户的权限控制了计算机。</p>
+<p>缓冲区溢出原理的简单示意图：</p>
+<p><img src="http://i2.muimg.com/567571/f7e395a1b8a633a4.png" alt="1"></p>
+<p>可以看出这个函数的有一个参数和两个局部变量。因为局部变量和参数会放在函数的栈帧上而且这个栈帧的大小是编译时就确定好的。所以可以看出局部变量1大小是4字节局部变量2的大小是8字节。ebp和return addr是用来保存栈帧基址和函数的返回地址的对程序员透明。如果我们给局部变量2输入16个字节会发生什么呢。</p>
+<p><img src="http://i2.muimg.com/567571/a000eee20a04f635.png" alt="2"></p>
+<p>可以看到因为局部变量2只有8字节大小的内存空间多出来的8字节会覆盖掉ebp和return addr。在这个函数执行完后会返回到aaaa这个地址也就是0x61616161去执行下面的指令如果我们把return addr换成事先部署在内存的恶意指令再把return addr换成这块内存的地址则程序会执行我们实现部署好的恶意指令。这就是缓冲区溢出的基本原理。</p>
+<p>下面给出一个存在缓冲区溢出的源码本文的所有实例都是基于这个源码进行编译的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#include&lt;stdio.h&gt;</div><div class="line">void func()</div><div class="line">&#123;</div><div class="line">    char name[0x50];//0x100大小的栈空间</div><div class="line">    read(0, name, 0x100);//输入0x200大小的数据</div><div class="line">    write(1, name, 0x100);</div><div class="line">&#125;</div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">    func();</div><div class="line">    return 0;</div><div class="line">&#125;</div><div class="line">这里bbbb是eip的位置cccc是shellcode的位置然后运行这个python后程序崩溃我们调试core dump(gdb -c core)文件找cccc的地址填到eip的位置即可。</div></pre></td></tr></table></figure>
+<p>##X86下无任何的防护机制</p>
+<p>编译方式：</p>
+<p><code>gcc -m32 1.c -o 1 -O0 -fno-stack-protector -z execstack</code></p>
+<p>m32:生成32bit程序需要gcc-multilib(x86机器上编译不用加)</p>
+<p>O0:不进行任何优化</p>
+<p>fno-stack-protector:不开启canary栈溢出检测</p>
+<p>z execstack:开启栈可执行关闭NX</p>
+<p>首先寻找多少字节能溢出且刚好能够覆盖return addr。我们使用gdb-peda提供的pattern_create和pattern_offset。pattern_create是生成一个字符串模板输入后根据EIP来确定覆盖return addr的长度。</p>
+<p><code>gdb-peda$ pattern_create 200</code></p>
+<p>‘AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAnAASAAoAATAApAAUAAqAAVAArAAWAAsAAXAAtAAYAAuAAZAAvAAwA’</p>
+<p>然后让程序运行输入这串字符串程序崩溃</p>
+<p><img src="http://i2.muimg.com/567571/d5a898405afbc5e6.png" alt="2"></p>
+<p>确定主机是否开启ASLR</p>
+<p>（ASLR（Address space layout randomization）是一种针对缓冲区溢出的安全保护技术，通过对堆、栈、共享库映射等线性区布局的随机化，通过增加攻击者预测目的地址的难度，防止攻击者直接定位攻击代码位置，达到阻止溢出攻击的目的。据研究表明ASLR可以有效的降低缓冲区溢出攻击的成功率，如今Linux、FreeBSD、Windows等主流操作系统都已采用了该技术。）</p>
+<p>查看ASLR开启的命令：</p>
+<p><code>cat /proc/sys/kernel/randomize_va_space</code></p>
+<p>0:关闭ASLR</p>
+<p>1：mmap base、stack、vdso page将随机化。这意味着.so文件将被加载到随机地址。链接时指定了-pie选项的可执行程序，其代码段加载地址将被随机化。配置内核时如果指定了CONFIG_COMPAT_BRK，randomize_va_space缺省为1。此时heap没有随机化。</p>
+<p>2：在1的基础上增加了heap随机化。配置内核时如果禁用CONFIG_COMPAT_BRK，randomize_va_space缺省为2</p>
+<p>我的ubuntu显示没有关闭ASLR，然后我使用命令<code>echo 0 &gt; /proc/sys/kernel/randomize_va_space</code>去关闭的时候提示我权限不够，切换到root用户，使用root权限关闭了</p>
+<p><img src="http://i1.piimg.com/567571/b014337787e92964.png" alt="1"></p>
+<p>补充：ubuntu关闭地址随机化的方法</p>
+<p><a href="http://blog.csdn.net/white_eyes/article/details/7169199" target="_blank" rel="external">http://blog.csdn.net/white_eyes/article/details/7169199</a></p>
+<p>这里也可以使用ldd来看加载动态库时动态库的基址来确定是否开启ASLR</p>
+<p><img src="http://i1.piimg.com/567571/726601558406a944.png" alt="1"></p>
+<p>两次libc的基址一样也说明了我们已经关闭ASLR。然后我们可以在栈中部署一段shellcode然后让return addr的内容位于shellcode的地址注意这块有个坑。gdb调试的时候栈地址和程序运行时不同所以我们需要开启core dump或者attach到运行的程序上来看程序运行时的栈地址。通过ulimit -c unlimited来开启core dump。然后让程序崩溃调试一下core dump来找shellcode的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">from pwn import *</div><div class="line">io = process(&quot;./1&quot;)</div><div class="line">payload = &apos;a&apos; * 92</div><div class="line">payload += &apos;bbbb&apos; # eip</div><div class="line">payload += &apos;cccc&apos; # shellcode</div><div class="line">io.send(payload)</div></pre></td></tr></table></figure>
+<p>这里bbbb是eip的位置cccc是shellcode的位置然后运行这个python后程序崩溃我们调试core dump(gdb -c core)文件找cccc的地址填到eip的位置即可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/03/29/缓冲区溢出/" data-id="cjfgehm39000kvgunzhvkh6d4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-stack/">pwn,stack</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/04/04/百度杯十一月/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          百度杯十一月
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/03/29/看雪2016CrackMe/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">看雪CFT2016CrackMe</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

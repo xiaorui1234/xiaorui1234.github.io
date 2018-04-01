@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>暑期夏令营 | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="二进制安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="暑期夏令营">
+<meta property="og:url" content="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="二进制安全">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/%E5%9B%BE%E7%89%871.png">
+<meta property="og:updated_time" content="2017-07-20T13:26:29.523Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="暑期夏令营">
+<meta name="twitter:description" content="二进制安全">
+<meta name="twitter:image" content="http://ote495tnr.bkt.clouddn.com/%E5%9B%BE%E7%89%871.png">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-暑假夏令营二进制安全学习笔记" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/20/暑假夏令营二进制安全学习笔记/" class="article-date">
+  <time class="post-time" datetime="2017-07-20T01:41:58.000Z" itemprop="datePublished">
+    <span class="post-month">7月</span><br/>
+    <span class="post-day">20</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      暑期夏令营
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="二进制安全"><a href="#二进制安全" class="headerlink" title="二进制安全"></a>二进制安全</h4><a id="more"></a>
+<p>Day 1</p>
+<p>0x1 高级汇编语言</p>
+<p>1.debug 命令</p>
+<p>-r  查看、改变寄存器内容</p>
+<p>-d  查看内存中的内容</p>
+<p>-e  改变内存中的内容</p>
+<p>-u  将内存中的机器指令翻译成汇编指令</p>
+<p>-t  执行一条机器指令</p>
+<p>-p  执行int指令</p>
+<p>-g  运行到有断点处</p>
+<p>2.汇编代码的编译过程</p>
+<p>环境准备：</p>
+<p>(1)文本编辑器(010 Editor)</p>
+<p>(2)编译器masm</p>
+<p>(3)链接器link</p>
+<p>(4)调试器debug</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">masm file.asm; </div><div class="line">link file;</div><div class="line">debug file.exe</div></pre></td></tr></table></figure>
+<p>3.寄存器的讲解</p>
+<p>4个数据寄存器（EAX、EBX、ECX和EDX）</p>
+<p>2个变址寄存器（ESI和EDI）</p>
+<p>2个指针寄存器（ESP和EBP）</p>
+<p>6个段寄存器（ES、CS、SS、DS、FS和GS）</p>
+<p>1个指令指针寄存器（EIP）</p>
+<p>1个标志寄存器（EFlags）</p>
+<p>寄存器的分类：</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/%E5%9B%BE%E7%89%871.png" alt="1"></p>
+<p>(1)数据段寄存器</p>
+<ul>
+<li>寄存器EAX称为基地址寄存器（Accumulator）,用累加器进行的操作可能需要更少时间。累加器可用于乘、除、输入输出等操作，他们的使用频率很高。EAX还通常用于存储函数的返回值。</li>
+<li>寄存器EBX称为基地址寄存器（Base Register）。它可作为存储器指针来使用。</li>
+<li>寄存器ECX称为计数寄存器（Count Register）。在循环和字符串操作时，用它来控制循环次数；在位操作中，当移位多时，要用CL来指明移位的位数。</li>
+<li>寄存器EDX称为数据段寄存器（Data Register）。在进行乘、除运算时，它可以作为默认的操作数参与运算，也可以用于存放I/O的端口地址。</li>
+</ul>
+<p>(2)变址寄存器</p>
+<p>32位的CPU中有2个32位通用寄存器ESI和EDI。其低16位对应先前CPU中的SI和DI，对低16位数据的存取，不影响高16位的数据。</p>
+<p>ESI通常在内存操作指令中作为源地址的指针使用，而EDI通常在内存操作指令中作为目的指针使用。DE/ES通常是默认段寄存器或选择寄存器。</p>
+<p>在很多字节串指令中，DS：ESI指向源串，而ES：EDI指向目标串。</p>
+<p>(3)指针寄存器</p>
+<p>寄存器ESP、ESP称为指针寄存器（Pointer Register），主要用于存放堆栈内存储单元的偏移量，用它们可以实现多种存储器操作数的寻址方式，为不同的地址形式访问存储单元提供方便。指针寄存器不可分割成8位寄存器。作为通用寄存器，也可存储算数逻辑运算的操作数和运算结果。</p>
+<p>他们主要用于访问堆栈内的存储单元，并规定EBP为基指针（Base Pointer）寄存器，通过它减去一定的偏移值，来访问栈中的元素；ESP为堆栈指针（Stack Pointer）寄存器，它始终指向栈顶。</p>
+<p>(4)段寄存器</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">寄存器</th>
+<th style="text-align:center">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">CX</td>
+<td style="text-align:center">计数器</td>
+</tr>
+<tr>
+<td style="text-align:center">SI</td>
+<td style="text-align:center">串操作中的源指针</td>
+</tr>
+<tr>
+<td style="text-align:center">DI</td>
+<td style="text-align:center">串操作中的目的指针</td>
+</tr>
+<tr>
+<td style="text-align:center">BP</td>
+<td style="text-align:center">存取堆栈的指针</td>
+</tr>
+<tr>
+<td style="text-align:center">SP</td>
+<td style="text-align:center">堆栈指针</td>
+</tr>
+</tbody>
+</table>
+<p>(5)指令指针寄存器</p>
+<p>32位CPU把指令指针扩展到32位，并记作EIP。指令指针EIP是存放下次将要执行的指令在代码段的偏移量。</p>
+<p>4.指令系统讲解</p>
+<p>(1)数据传送指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">MOV:把源操作数送给目的操作数</div><div class="line">XCHG:交换两个操作数的数据</div><div class="line">PUSH,POP:把操作数压入或取出堆栈</div><div class="line">PUSHF,POPF,PUSHA,POPA:堆栈指令群</div><div class="line">LEA,LDS,LES:取地址寄存器</div></pre></td></tr></table></figure>
+<p>(2)算数运算指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ADD,ADC:加法指令</div><div class="line">SUB,SBB：减法指令</div><div class="line">INC,DEC：把OP的值加1或减一</div><div class="line">NEG：将OP的符号反相（取二进制补码）</div><div class="line">MUL,IMUL:乘法指令</div><div class="line">DIV,IDIV：出发指令</div></pre></td></tr></table></figure>
+<p>(3)位运算指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">AND,OR,XOR,NOT,TEST:执行BIT和BIT之间的逻辑运算</div><div class="line">SHR,SHL,SAR,SAL：移位指令</div><div class="line">ROR,ROL,RCR,RCL：循环移位指令</div></pre></td></tr></table></figure>
+<p>(4)程序流控制指令集</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">CLC,STC,CMC:设定进位标志</div><div class="line">CLD,STD：设定方向标志</div><div class="line">CLI,STI：设定中断标志</div><div class="line">CMP：比较OP1和OP2的值</div><div class="line">JMP：跳往指定地址执行</div><div class="line">LOOP：循环指令集</div><div class="line">CALL,RET：子程序调用，返回指令</div><div class="line">INT,IRET：中断调用及返回指令。在执行INT时，CPU会自动将标志寄存器的值入栈，在执行IRET时则会将堆栈中的标志值返回寄存器。</div></pre></td></tr></table></figure>
+<p>(5)条件转移指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">JXX:当特定条件成立则跳往指定地址执行</div><div class="line">常用的有：</div><div class="line">Z：为0跳转</div><div class="line">G：大于则跳转</div><div class="line">L：小于则跳转</div><div class="line">E：等于则跳转</div><div class="line">N：取相反条件</div></pre></td></tr></table></figure>
+<p>(6)字符串操作指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">MOVSB,MOVSW,MOVCD：字符串传送指令</div><div class="line">CMPSB,CMPSW,CMPSD：字符串比较指令</div><div class="line">SCASB,SCASW：字符串搜索指令</div><div class="line">LODSB,LODSW,STOSB,STOSW：字符串载入或存储指令</div></pre></td></tr></table></figure>
+<p>持续更新中</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfgehm30000bvgunq9d0jtxy" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/09/22/格式化字符串漏洞/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          格式化字符串漏洞
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/07/19/XMAN-CTF-2017/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">XMAN CTF 2017</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
