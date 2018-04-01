@@ -40,9 +40,9 @@
     <h2 class="author">XiaoRui</h2>
     <h3 class="description">奋斗中的小白</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>13</strong><br>文章</div></a>
       <a href="/categories"><div><strong>0</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -67,109 +67,6 @@
 </div>
 
         <section id="main">
-  
-    <article id="post-pwntools调试命令集合" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/04/01/pwntools调试命令集合/" class="article-date">
-  <time class="post-time" datetime="2018-04-01T02:29:09.000Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">01</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/01/pwntools调试命令集合/">pwntools调试命令集合</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!--more>
-
-之前做分析pwn题时，命令经常记不住，今天有时间了总结下调试pwn时一直常用的命令。
-
-#### 0x1 编译
-文章中用到的test都是文件名
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gcc test.c -0 test  </div><div class="line">gcc -fno-stack-protector -z execstack -o test test.c</div></pre></td></tr></table></figure>
-<p>使用这条命令编译程序，<code>-fno-stack-protector</code>和<code>-z execstack</code>这两个参数会分别关掉DEP和Stack Protestor。</p>
-<h4 id="0x2-gdb调试技巧"><a href="#0x2-gdb调试技巧" class="headerlink" title="0x2 gdb调试技巧"></a>0x2 gdb调试技巧</h4><ol>
-<li>n：执行一条源代码但不进入函数内部</li>
-<li>ni：执行一条汇编代码但不进入函数内部</li>
-<li>s：执行一条源代码且进入函数内部</li>
-<li>si：执行一条汇编代码且进入函数内部</li>
-<li>c：继续执行到下一个断点</li>
-<li>下断点：b 函数名 或是 b *addr</li>
-<li>查看寄存器的值：info register</li>
-<li>查看内存：x/数字 wx 以十六进制，4字节显示指定内存<pre><code>x/数字 gx 以十六进制，4字节显示指定内存
-</code></pre></li>
-</ol>
-<h4 id="0x3-调试命令"><a href="#0x3-调试命令" class="headerlink" title="0x3 调试命令"></a>0x3 调试命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">checksec  //查看程序开启的保护机制</div></pre></td></tr></table></figure>
-<p>常见的保护措施有以下几种：</p>
-<ol>
-<li><p>CANARY:栈溢出检查，用Canary金丝雀值是否变化来检测,Canary found表示开启。金丝雀最早指的是矿工曾利用金丝雀来确认是否有气体泄漏，如果金丝雀因为气体泄漏而中毒死亡，可以给矿工预警。这里是一种缓冲区溢出攻击缓解手段：启用栈保护后，函数开始执行的时候会先往栈里插入cookie信息，当函数真正返回的时候会验证cookie信息是否合法，如果不合法就停止程序运行。攻击者在覆盖返回地址的时候往往也会将cookie信息给覆盖掉，导致栈保护检查失败而阻止shellcode的执行。在Linux将cookie信息称为Canary。</p>
-</li>
-<li><p>FORTIFY:FORTIFY_SOURCE机制对格式化字符串有两个限制：（1）包含%n的格式化字符串不能位于程序内存中的可写地址 （2）当使用位置参数时，必须使用范围内的所有参数。</p>
-</li>
-<li><p>NX:NX enabled如果这个保护开启就是意味着栈中数据没有执行权限，以前的经常用的call esp或者jmp esp的方法就不能使用，但是可以利用rop这种方法绕过。</p>
-</li>
-<li><p>PIE：PIE enabled如果程序开启这个地址随机化选项就意味着程序每次运行的时候地址都会变化，而如果没有开PIE的话那么No PIE (0x400000)，括号内的数据就是程序的基地址。</p>
-</li>
-<li><p>RELRO:RELRO会有Partial RELRO和FULL RELRO，如果开启FULL RELRO，意味着我们无法修改got表。</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cat /proc/sys/kernel/randomize_va_space  //查看地址随机化保护是否开启</div><div class="line">ldd test</div></pre></td></tr></table></figure>
-<p><img src="http://ote495tnr.bkt.clouddn.com/58.png" alt=""></p>
-<p>可以通过这两种方法来查看是否开启了地址随机化保护。控制ASLR有3中状态：<br>0：表示关闭ASLR</p>
-<p>1: mmap base、stack、vdso page将随机化。这意味着.so文件将被加载到随机地址。链接时指定了-pie选项的可执行程序，其代码段加载地址将被随机化。配置内核时如果指定了CONFIG_COMPAT_BRK，randomize_va_space缺省为1。此时heap没有随机化。</p>
-<p>2:在1的基础上增加了heap随机化。配置内核时如果禁用CONFIG_COMPAT_BRK，randomize_va_space缺省为2。</p>
-<p>关闭ASLR，切换至Root用户，输入命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo 0 &gt; /proc/sys/kernel/randomize_va_space</div></pre></td></tr></table></figure></p>
-<p>开启ASLR，切换至Root用户，输入命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo 2 &gt; /proc/sys/kernel/randomize_va_space</div></pre></td></tr></table></figure></p>
-<h4 id="0x4-端口映射"><a href="#0x4-端口映射" class="headerlink" title="0x4 端口映射"></a>0x4 端口映射</h4><p>目标程序作为一个服务绑定到服务器的某个端口上，可以使用socat这个工具来完成，命令如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">socat TCP4-LISTEN:5555,fork EXEC:./test</div></pre></td></tr></table></figure></p>
-<p>这个程序的IO就被重定向到5555这个端口上，并且可以使用nc 127.0.0.1 5555来访问目标程序服务。</p>
-<h4 id="0x5-文件分析"><a href="#0x5-文件分析" class="headerlink" title="0x5 文件分析"></a>0x5 文件分析</h4><p>查看程序是多少位，可以使用file这条命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@ubuntu:~/Desktop$ file test</div><div class="line">test: ELF 32-bit LSB  executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=76b50d733400542b34d5e8fa23f0f12dc951d4ef, stripped</div></pre></td></tr></table></figure>
-<p>查看系统调用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">strace ./test</div></pre></td></tr></table></figure></p>
-<p>查看操作系统libc的版本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dpkg -l | grep libc</div></pre></td></tr></table></figure></p>
-<p>查看pid,但是需要注意的是，先让程序运行再执行命令，否则pid一直在变化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ps -aef | grep file</div></pre></td></tr></table></figure></p>
-<p>查看程序在栈上的权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /proc/[pid]/maps | grep stack</div></pre></td></tr></table></figure></p>
-<p>获取plt函数和函数对应的got表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">objdump -d -j .plt test   //plt表</div><div class="line">objdump -R test           //got表</div></pre></td></tr></table></figure></p>
-<p><img src="http://ote495tnr.bkt.clouddn.com/59.png" alt=""></p>
-<p><img src="http://ote495tnr.bkt.clouddn.com/60.png" alt=""></p>
-<p>.bss段是用来保存全局变量的值，地址固定，并且可以读可写，可以通过如下的命令获取.bss段的地址。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$ readelf -S test</div><div class="line">....</div><div class="line">[23] .got              PROGBITS        08049ffc 000ffc 000004 04  WA  0   0  4</div><div class="line">  [24] .got.plt          PROGBITS        0804a000 001000 000018 04  WA  0   0  4</div><div class="line">  [25] .data             PROGBITS        0804a018 001018 000008 00  WA  0   0  4</div><div class="line">  [26] .bss              NOBITS          0804a020 001020 000004 00  WA  0   0  1</div><div class="line">  [27] .comment          PROGBITS        00000000 001020 000034 01  MS  0   0  1</div><div class="line">  [28] .shstrtab         STRTAB          00000000 001054 0000fa 00      0   0  1</div><div class="line">Key to Flags:</div><div class="line">  W (write), A (alloc), X (execute), M (merge), S (strings)</div><div class="line">  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)</div><div class="line">  O (extra OS processing required) o (OS specific), p (processor specific)</div><div class="line">....</div></pre></td></tr></table></figure></p>
--->
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合/" data-id="cjfgh2jd2000650un71n0253j" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
   
     <article id="post-西普杯2017年网络安全技能赛-writeup" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -236,7 +133,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfgh2jej000r50unl6hfy7ek" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfghdacm000pnounwo5kk20l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -318,7 +215,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfgh2jc4000050unyw4925ga" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfghdabh0002nounev4fkpvm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -399,7 +296,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfgh2jd7000750uncf87r2su" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfghdabt0006nouncyowqx25" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -471,7 +368,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfgh2jcz000550unismbs963" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfghdabp0005noun3mxjgx19" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安装教程/">安装教程</a></li></ul>
@@ -570,7 +467,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfgh2jdk000a50un6lvdjod6" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfghdabv0007noun729e7fv0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -625,7 +522,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfgh2jdr000g50unk8z29s1m" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfghdac7000enounlh5phfid" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-format/">pwn,format</a></li></ul>
@@ -680,7 +577,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfgh2jdp000e50uny0wskuad" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfghdac5000bnoun0n6tkjq8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn，format/">pwn，format</a></li></ul>
@@ -735,7 +632,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfgh2jdn000b50unx2bm3xxq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfghdac3000anoun4wqguupq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -790,10 +687,65 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/19/XMAN-CTF-2017/" data-id="cjfgh2jck000250und6y39pd8" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/07/19/XMAN-CTF-2017/" data-id="cjfghdabb0000nounneqhzi0i" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-缓冲区溢出（1）" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/07/缓冲区溢出（1）/" class="article-date">
+  <time class="post-time" datetime="2017-07-07T01:41:58.000Z" itemprop="datePublished">
+    <span class="post-month">7月</span><br/>
+    <span class="post-day">07</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/07/缓冲区溢出（1）/">缓冲区溢出（1）</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="缓冲区溢出攻击之x86开启NX提供libc-so"><a href="#缓冲区溢出攻击之x86开启NX提供libc-so" class="headerlink" title="缓冲区溢出攻击之x86开启NX提供libc.so"></a>缓冲区溢出攻击之x86开启NX提供libc.so</h4>
+        
+          <p class="article-more-link">
+            <a href="/2017/07/07/缓冲区溢出（1）/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/07/07/缓冲区溢出（1）/" data-id="cjfghdack000nnounqntgx082" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-stack/">pwn,stack</a></li></ul>
 
     </footer>
   </div>
@@ -848,9 +800,9 @@
     <h2 class="author">XiaoRui</h2>
     <h3 class="description">奋斗中的小白</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>13</strong><br>文章</div></a>
       <a href="/categories"><div><strong>0</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
 
 
