@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android动态调试Smali文件 | √素顏☃繁華夢☪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="动态调试分为Java层和Native层调试Java层动态调试主要是调试smali文件Native层主要是调试so文件这篇文章主要介绍smali文件动态调试的方法
+准备工作
+Android studio
+smalidea插件（识别smali语法）安装smaliidea方法：File–&amp;gt;Setings–&amp;gt;Plugins–&amp;gt;Install plugin fromdisk…. –&amp;gt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android动态调试Smali文件">
+<meta property="og:url" content="http://yoursite.com/2018/04/11/Android动态调试Smali文件/index.html">
+<meta property="og:site_name" content="√素顏☃繁華夢☪">
+<meta property="og:description" content="动态调试分为Java层和Native层调试Java层动态调试主要是调试smali文件Native层主要是调试so文件这篇文章主要介绍smali文件动态调试的方法
+准备工作
+Android studio
+smalidea插件（识别smali语法）安装smaliidea方法：File–&amp;gt;Setings–&amp;gt;Plugins–&amp;gt;Install plugin fromdisk…. –&amp;gt">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/61.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/62.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/63.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/66.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/64.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/65.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/67.png">
+<meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/68.png">
+<meta property="og:updated_time" content="2018-04-11T09:35:46.156Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android动态调试Smali文件">
+<meta name="twitter:description" content="动态调试分为Java层和Native层调试Java层动态调试主要是调试smali文件Native层主要是调试so文件这篇文章主要介绍smali文件动态调试的方法
+准备工作
+Android studio
+smalidea插件（识别smali语法）安装smaliidea方法：File–&amp;gt;Setings–&amp;gt;Plugins–&amp;gt;Install plugin fromdisk…. –&amp;gt">
+<meta name="twitter:image" content="http://ote495tnr.bkt.clouddn.com/61.png">
+  
+    <link rel="alternate" href="/atom.xml" title="√素顏☃繁華夢☪" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>15</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-Android动态调试Smali文件" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/11/Android动态调试Smali文件/" class="article-date">
+  <time class="post-time" datetime="2018-04-11T08:31:06.000Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">11</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android动态调试Smali文件
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<p>动态调试分为Java层和Native层调试<br>Java层动态调试主要是调试smali文件<br>Native层主要是调试so文件<br>这篇文章主要介绍smali文件动态调试的方法</p>
+<h4 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h4><ul>
+<li>Android studio</li>
+<li>smalidea插件（识别smali语法）<br>安装smaliidea方法：File–&gt;Setings–&gt;Plugins–&gt;Install plugin fromdisk…. –&gt;Restart</li>
+<li>apktool.jar/AhakaApktool.jar(对apk进行反编译和回编译)</li>
+<li>夜神模拟器</li>
+</ul>
+<h4 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h4><ul>
+<li>安装jdk环境</li>
+<li>安装SDK<br>运行SDK Manager.exe这里只要安装默认的package就可以了，后期可以根据自己的需要安装其他的package，安装好之后把platform-tools和tools添加到path环境变量中<br>打开cmd输入adb或是monitor进行测试，如果不报错说明安装成功了</li>
+</ul>
+<p><img src="http://ote495tnr.bkt.clouddn.com/61.png" alt=""></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/62.png" alt=""></p>
+<h4 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h4><ul>
+<li>修改AndroidMainifest.xml文件<br>反编译apk文件<br>java -jar ShakaApktool.jar/apktool.jar d -df apkfile -o filename<br>然后在AndroidMainifest.xml中添加调试属性android:debuggable=”true”</li>
+</ul>
+<p><img src="http://ote495tnr.bkt.clouddn.com/63.png" alt=""></p>
+<p>回编译apk文件<br>java -jar ShakaApktool.jar/apktool.jar b filename -o apkfile1</p>
+<p>ShakaApktool.jar/apktool.jar 这两个工具都可以对apk文件进行反编译和回编译<br>回编译后的apk需要进行签名，可以使用工具进行签名</p>
+<ul>
+<li><p>AS中导入源码 AS/idea中导入源码   File–&gt;open</p>
+</li>
+<li><p>设置远程调试选项<br>Run–&gt;Debug Configurations–&gt;Remote Java Application  Host填写为localhost，端口为Debug开放的端口8700</p>
+</li>
+<li><p>连接模拟器<br>nox_adb.exe connect 127.0.0.1:62001</p>
+</li>
+</ul>
+<p><img src="http://ote495tnr.bkt.clouddn.com/66.png" alt=""></p>
+<ul>
+<li>安装apk<br>adb install apkfile</li>
+</ul>
+<p><img src="http://ote495tnr.bkt.clouddn.com/64.png" alt=""></p>
+<p>安装失败，使用adb kill-server结束adb服务，然后在再重启就可以<br>adb devices 检测设备连接情况</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/65.png" alt=""></p>
+<ul>
+<li><p>下断点</p>
+</li>
+<li><p>启动apk文件调试<br>adb shell am start -D -n packageName/ActivityName</p>
+</li>
+</ul>
+<p>在monitor在检测apk</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/67.png" alt=""></p>
+<p>启动调试后，在断点处断下来，模拟器中会有调试等待的指令</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/68.png" alt=""></p>
+<p>然后就可以开始调试了</p>
+<h4 id="回编译遇到错误解决办法"><a href="#回编译遇到错误解决办法" class="headerlink" title="回编译遇到错误解决办法"></a>回编译遇到错误解决办法</h4><p>回编译apk文件，遇到报错提示：<br>No resource found that matches the given name ‘@android:style/Animation.OptionsPanel<br>No resource found that matches the given name ‘@android:style/Animation.LockScreen<br>在网上查了百度了一下这个错误，原因在于 styles.xml文件中，有如下代码，删除即可：</p>
+<p><style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="@android:style/Animation.OptionsPanel"></p>
+<p><style name="Base.TextAppearance.AppCompat.Widget.Button.Colored" parent="@android:style/Animation.LockScreen" /><br>这个文件可以根据提示的路径找到，一般是在res文件夹下</p>
+<p>error: No resource identifier found for attribute ‘roundIcon’ in package ‘android’<br>删除AndroidManifest.xml里的 android:roundIcon=”@mipmap/ic_launcher_round”</p>
+</style></p>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/11/Android动态调试Smali文件/" data-id="cjfuwjrwc0000n4un5mtatqxa" class="article-share-link">Partager</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/04/01/pwntools调试命令集合QAQ/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">pwntools调试命令集合</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">√素顏☃繁華夢☪</h1>
+    <h2 class="blog-subtitle">Go!Go!Go!</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://ote495tnr.bkt.clouddn.com/touxiang.jpg">
+    <h2 class="author">XiaoRui</h2>
+    <h3 class="description">奋斗中的小白</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>15</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/xiaorui1234" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://foxroot.cn/" target="_blank" title="FoxRoot">
+          FoxRoot
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 XiaoRui<br>
+      
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

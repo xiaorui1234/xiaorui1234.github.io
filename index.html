@@ -40,7 +40,7 @@
     <h2 class="author">XiaoRui</h2>
     <h3 class="description">奋斗中的小白</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>15</strong><br>文章</div></a>
       <a href="/categories"><div><strong>0</strong><br>分类</div></a>
       <a href="/tags"><div><strong>8</strong><br>标签</div></a>
     </div>
@@ -67,6 +67,104 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-Android动态调试Smali文件" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/11/Android动态调试Smali文件/" class="article-date">
+  <time class="post-time" datetime="2018-04-11T08:31:06.000Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">11</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/11/Android动态调试Smali文件/">Android动态调试Smali文件</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <a id="more"></a>
+<p>动态调试分为Java层和Native层调试<br>Java层动态调试主要是调试smali文件<br>Native层主要是调试so文件<br>这篇文章主要介绍smali文件动态调试的方法</p>
+<h4 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h4><ul>
+<li>Android studio</li>
+<li>smalidea插件（识别smali语法）<br>安装smaliidea方法：File–&gt;Setings–&gt;Plugins–&gt;Install plugin fromdisk…. –&gt;Restart</li>
+<li>apktool.jar/AhakaApktool.jar(对apk进行反编译和回编译)</li>
+<li>夜神模拟器</li>
+</ul>
+<h4 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h4><ul>
+<li>安装jdk环境</li>
+<li>安装SDK<br>运行SDK Manager.exe这里只要安装默认的package就可以了，后期可以根据自己的需要安装其他的package，安装好之后把platform-tools和tools添加到path环境变量中<br>打开cmd输入adb或是monitor进行测试，如果不报错说明安装成功了</li>
+</ul>
+<p><img src="http://ote495tnr.bkt.clouddn.com/61.png" alt=""></p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/62.png" alt=""></p>
+<h4 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h4><ul>
+<li>修改AndroidMainifest.xml文件<br>反编译apk文件<br>java -jar ShakaApktool.jar/apktool.jar d -df apkfile -o filename<br>然后在AndroidMainifest.xml中添加调试属性android:debuggable=”true”</li>
+</ul>
+<p><img src="http://ote495tnr.bkt.clouddn.com/63.png" alt=""></p>
+<p>回编译apk文件<br>java -jar ShakaApktool.jar/apktool.jar b filename -o apkfile1</p>
+<p>ShakaApktool.jar/apktool.jar 这两个工具都可以对apk文件进行反编译和回编译<br>回编译后的apk需要进行签名，可以使用工具进行签名</p>
+<ul>
+<li><p>AS中导入源码 AS/idea中导入源码   File–&gt;open</p>
+</li>
+<li><p>设置远程调试选项<br>Run–&gt;Debug Configurations–&gt;Remote Java Application  Host填写为localhost，端口为Debug开放的端口8700</p>
+</li>
+<li><p>连接模拟器<br>nox_adb.exe connect 127.0.0.1:62001</p>
+</li>
+</ul>
+<p><img src="http://ote495tnr.bkt.clouddn.com/66.png" alt=""></p>
+<ul>
+<li>安装apk<br>adb install apkfile</li>
+</ul>
+<p><img src="http://ote495tnr.bkt.clouddn.com/64.png" alt=""></p>
+<p>安装失败，使用adb kill-server结束adb服务，然后在再重启就可以<br>adb devices 检测设备连接情况</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/65.png" alt=""></p>
+<ul>
+<li><p>下断点</p>
+</li>
+<li><p>启动apk文件调试<br>adb shell am start -D -n packageName/ActivityName</p>
+</li>
+</ul>
+<p>在monitor在检测apk</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/67.png" alt=""></p>
+<p>启动调试后，在断点处断下来，模拟器中会有调试等待的指令</p>
+<p><img src="http://ote495tnr.bkt.clouddn.com/68.png" alt=""></p>
+<p>然后就可以开始调试了</p>
+<h4 id="回编译遇到错误解决办法"><a href="#回编译遇到错误解决办法" class="headerlink" title="回编译遇到错误解决办法"></a>回编译遇到错误解决办法</h4><p>回编译apk文件，遇到报错提示：<br>No resource found that matches the given name ‘@android:style/Animation.OptionsPanel<br>No resource found that matches the given name ‘@android:style/Animation.LockScreen<br>在网上查了百度了一下这个错误，原因在于 styles.xml文件中，有如下代码，删除即可：</p>
+<p><style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="@android:style/Animation.OptionsPanel"></p>
+<p><style name="Base.TextAppearance.AppCompat.Widget.Button.Colored" parent="@android:style/Animation.LockScreen" /><br>这个文件可以根据提示的路径找到，一般是在res文件夹下</p>
+<p>error: No resource identifier found for attribute ‘roundIcon’ in package ‘android’<br>删除AndroidManifest.xml里的 android:roundIcon=”@mipmap/ic_launcher_round”</p>
+</style></p>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/11/Android动态调试Smali文件/" data-id="cjfuwjrwc0000n4un5mtatqxa" class="article-share-link">Partager</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-pwntools调试命令集合QAQ" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -152,7 +250,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/" data-id="cjfgi9ca500068cunvj1lzbjz" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/" data-id="cjfuwjrx3000bn4unayalyli3" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
@@ -231,7 +329,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfgi9cbl000p8cunmlotoxan" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfuwjryf0012n4uns5uzeh9b" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -313,7 +411,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfgi9c9700008cunlqxdzokn" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfuwjrwo0004n4un9q6j9usp" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -394,7 +492,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfgi9car000a8cun2anknxhq" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfuwjrwv0006n4unsonpniy5" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -466,7 +564,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfgi9ca000058cuniyfco12b" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfuwjrx10008n4uneafg90nn" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安装教程/">安装教程</a></li></ul>
@@ -565,7 +663,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfgi9ca800078cunyeipcp56" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfuwjrwj0002n4unv3m3kb09" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -620,7 +718,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfgi9cb2000g8cun3cvghv7c" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfuwjrxe000jn4unarav82ab" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-format/">pwn,format</a></li></ul>
@@ -675,7 +773,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfgi9cc1000r8cunw0musymh" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfuwjrxb000gn4uny7nia6ia" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn，format/">pwn，format</a></li></ul>
@@ -730,62 +828,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfgi9cav000b8cunjygsaiwx" class="article-share-link">Partager</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-XMAN-CTF-2017" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/07/19/XMAN-CTF-2017/" class="article-date">
-  <time class="post-time" datetime="2017-07-19T09:24:30.000Z" itemprop="datePublished">
-    <span class="post-month">7月</span><br/>
-    <span class="post-day">19</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/07/19/XMAN-CTF-2017/">XMAN CTF 2017</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>0x1 re3<br>
-        
-          <p class="article-more-link">
-            <a href="/2017/07/19/XMAN-CTF-2017/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/19/XMAN-CTF-2017/" data-id="cjfgi9c9o00028cunm1uihn8m" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfuwjrxa000en4un5f7dxjz6" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -843,7 +886,7 @@
     <h2 class="author">XiaoRui</h2>
     <h3 class="description">奋斗中的小白</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>15</strong><br>文章</div></a>
       <a href="/categories"><div><strong>0</strong><br>分类</div></a>
       <a href="/tags"><div><strong>8</strong><br>标签</div></a>
     </div>
