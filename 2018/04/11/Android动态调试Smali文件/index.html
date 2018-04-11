@@ -25,7 +25,7 @@ smalidea插件（识别smali语法）安装smaliidea方法：File–&amp;gt;Seti
 <meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/65.png">
 <meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/67.png">
 <meta property="og:image" content="http://ote495tnr.bkt.clouddn.com/68.png">
-<meta property="og:updated_time" content="2018-04-11T09:35:46.156Z">
+<meta property="og:updated_time" content="2018-04-11T09:42:38.386Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android动态调试Smali文件">
 <meta name="twitter:description" content="动态调试分为Java层和Native层调试Java层动态调试主要是调试smali文件Native层主要是调试so文件这篇文章主要介绍smali文件动态调试的方法
@@ -163,15 +163,13 @@ smalidea插件（识别smali语法）安装smaliidea方法：File–&amp;gt;Seti
 <p>启动调试后，在断点处断下来，模拟器中会有调试等待的指令</p>
 <p><img src="http://ote495tnr.bkt.clouddn.com/68.png" alt=""></p>
 <p>然后就可以开始调试了</p>
-<h4 id="回编译遇到错误解决办法"><a href="#回编译遇到错误解决办法" class="headerlink" title="回编译遇到错误解决办法"></a>回编译遇到错误解决办法</h4><p>回编译apk文件，遇到报错提示：<br>No resource found that matches the given name ‘@android:style/Animation.OptionsPanel<br>No resource found that matches the given name ‘@android:style/Animation.LockScreen<br>在网上查了百度了一下这个错误，原因在于 styles.xml文件中，有如下代码，删除即可：</p>
-<p><style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="@android:style/Animation.OptionsPanel"></p>
-<p><style name="Base.TextAppearance.AppCompat.Widget.Button.Colored" parent="@android:style/Animation.LockScreen" /><br>这个文件可以根据提示的路径找到，一般是在res文件夹下</p>
-<p>error: No resource identifier found for attribute ‘roundIcon’ in package ‘android’<br>删除AndroidManifest.xml里的 android:roundIcon=”@mipmap/ic_launcher_round”</p>
-</style></p>
+<h4 id="回编译遇到错误解决办法"><a href="#回编译遇到错误解决办法" class="headerlink" title="回编译遇到错误解决办法"></a>回编译遇到错误解决办法</h4><p>回编译apk文件，遇到报错提示：<br>No resource found that matches the given name ‘@android:style/Animation.OptionsPanel<br>No resource found that matches the given name ‘@android:style/Animation.LockScreen<br>在网上查了百度了一下这个错误，原因在于 styles.xml文件中，有如下代码，删除即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;style name=&quot;Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored&quot; parent=&quot;@android:style/Animation.OptionsPanel&quot; /&gt;</div><div class="line">&lt;style name=&quot;Base.TextAppearance.AppCompat.Widget.Button.Colored&quot; parent=&quot;@android:style/Animation.LockScreen&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<p>这个文件可以根据提示的路径找到，一般是在res文件夹下<br>error: No resource identifier found for attribute ‘roundIcon’ in package ‘android’<br>删除AndroidManifest.xml里的 android:roundIcon=”@mipmap/ic_launcher_round”</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/Android动态调试Smali文件/" data-id="cjfuwjrwc0000n4un5mtatqxa" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2018/04/11/Android动态调试Smali文件/" data-id="cjfuwpwnr0000f8unpnlcarsg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -182,7 +180,7 @@ smalidea插件（识别smali语法）安装smaliidea方法：File–&amp;gt;Seti
   
   
     <a href="/2018/04/01/pwntools调试命令集合QAQ/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">pwntools调试命令集合</div>
     </a>
   

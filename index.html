@@ -146,15 +146,13 @@
 <p>启动调试后，在断点处断下来，模拟器中会有调试等待的指令</p>
 <p><img src="http://ote495tnr.bkt.clouddn.com/68.png" alt=""></p>
 <p>然后就可以开始调试了</p>
-<h4 id="回编译遇到错误解决办法"><a href="#回编译遇到错误解决办法" class="headerlink" title="回编译遇到错误解决办法"></a>回编译遇到错误解决办法</h4><p>回编译apk文件，遇到报错提示：<br>No resource found that matches the given name ‘@android:style/Animation.OptionsPanel<br>No resource found that matches the given name ‘@android:style/Animation.LockScreen<br>在网上查了百度了一下这个错误，原因在于 styles.xml文件中，有如下代码，删除即可：</p>
-<p><style name="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored" parent="@android:style/Animation.OptionsPanel"></p>
-<p><style name="Base.TextAppearance.AppCompat.Widget.Button.Colored" parent="@android:style/Animation.LockScreen" /><br>这个文件可以根据提示的路径找到，一般是在res文件夹下</p>
-<p>error: No resource identifier found for attribute ‘roundIcon’ in package ‘android’<br>删除AndroidManifest.xml里的 android:roundIcon=”@mipmap/ic_launcher_round”</p>
-</style></p>
+<h4 id="回编译遇到错误解决办法"><a href="#回编译遇到错误解决办法" class="headerlink" title="回编译遇到错误解决办法"></a>回编译遇到错误解决办法</h4><p>回编译apk文件，遇到报错提示：<br>No resource found that matches the given name ‘@android:style/Animation.OptionsPanel<br>No resource found that matches the given name ‘@android:style/Animation.LockScreen<br>在网上查了百度了一下这个错误，原因在于 styles.xml文件中，有如下代码，删除即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;style name=&quot;Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored&quot; parent=&quot;@android:style/Animation.OptionsPanel&quot; /&gt;</div><div class="line">&lt;style name=&quot;Base.TextAppearance.AppCompat.Widget.Button.Colored&quot; parent=&quot;@android:style/Animation.LockScreen&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<p>这个文件可以根据提示的路径找到，一般是在res文件夹下<br>error: No resource identifier found for attribute ‘roundIcon’ in package ‘android’<br>删除AndroidManifest.xml里的 android:roundIcon=”@mipmap/ic_launcher_round”</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/Android动态调试Smali文件/" data-id="cjfuwjrwc0000n4un5mtatqxa" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2018/04/11/Android动态调试Smali文件/" data-id="cjfuwpwnr0000f8unpnlcarsg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -250,7 +248,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/" data-id="cjfuwjrx3000bn4unayalyli3" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/" data-id="cjfuwpwoh0007f8unynrtr13a" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
@@ -329,7 +327,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfuwjryf0012n4uns5uzeh9b" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfuwpwp8000sf8untgnbfo9i" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -411,7 +409,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfuwjrwo0004n4un9q6j9usp" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfuwpwny0002f8unrahtxglj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -492,7 +490,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfuwjrwv0006n4unsonpniy5" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfuwpwoi0008f8unlzg5u438" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -564,7 +562,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfuwjrx10008n4uneafg90nn" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfuwpwoa0006f8unpo1apmm2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安装教程/">安装教程</a></li></ul>
@@ -663,7 +661,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfuwjrwj0002n4unv3m3kb09" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfuwpwol000bf8ung97zlpdb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -718,7 +716,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfuwjrxe000jn4unarav82ab" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfuwpwor000hf8unhwaj4oo3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-format/">pwn,format</a></li></ul>
@@ -773,7 +771,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfuwjrxb000gn4uny7nia6ia" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfuwpwop000ff8un1hl6k7by" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn，format/">pwn，format</a></li></ul>
@@ -828,7 +826,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfuwjrxa000en4un5f7dxjz6" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfuwpwon000cf8unijqtyl7k" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
