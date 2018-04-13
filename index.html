@@ -153,7 +153,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/Android动态调试Smali文件/" data-id="cjfuwpwnr0000f8unpnlcarsg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/11/Android动态调试Smali文件/" data-id="cjfxk3ugr0000kwun0lpm2oz8" class="article-share-link">Delen</a>
       
       
     </footer>
@@ -249,7 +249,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/" data-id="cjfuwpwoh0007f8unynrtr13a" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/04/01/pwntools调试命令集合QAQ/" data-id="cjfxk3uhg0007kwunuqb6xka2" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
@@ -328,7 +328,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfuwpwp8000sf8untgnbfo9i" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/12/10/西普杯2017年网络安全技能赛-writeup/" data-id="cjfxk3ui6000skwunmyxgbhni" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -374,11 +374,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <!--more>
-
-#### 0x1 apk.apk
-反编译之后看java源码，涉及到的关键函数有点多，但是耐心的分析下代码程序的逻辑并不难，通过uc这个函数可以知道程序对“XRL}D6hy4yfE7tuF6{”这个字符串做了加密处理，下面这段程序就它的处理方法
-
+        <a id="more"></a>
+<h4 id="0x1-apk-apk"><a href="#0x1-apk-apk" class="headerlink" title="0x1 apk.apk"></a>0x1 apk.apk</h4><p>反编译之后看java源码，涉及到的关键函数有点多，但是耐心的分析下代码程序的逻辑并不难，通过uc这个函数可以知道程序对“XRL}D6hy4yfE7tuF6{”这个字符串做了加密处理，下面这段程序就它的处理方法</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">public class cc</div><div class="line">&#123;</div><div class="line">  public static String encrypt(String paramString)</div><div class="line">  &#123;</div><div class="line">    String str = &quot;&quot;;</div><div class="line">    int i = 0;</div><div class="line">    if (i &gt;= paramString.length()) &#123;</div><div class="line">      return str;</div><div class="line">    &#125;</div><div class="line">    int j = paramString.charAt(i);</div><div class="line">    char c;</div><div class="line">    if ((j &gt;= 97) &amp;&amp; (j &lt;= 109)) &#123;</div><div class="line">      c = (char)(j + 13);</div><div class="line">    &#125;</div><div class="line">    for (;;)</div><div class="line">    &#123;</div><div class="line">      str = str + c;</div><div class="line">      i += 1;</div><div class="line">      break;</div><div class="line">      if ((j &gt;= 65) &amp;&amp; (j &lt;= 77)) &#123;</div><div class="line">        c = (char)(j + 13);</div><div class="line">      &#125; else if ((j &gt;= 110) &amp;&amp; (j &lt;= 122)) &#123;</div><div class="line">        c = (char)(j - 13);</div><div class="line">      &#125; else if ((j &gt;= 78) &amp;&amp; (j &lt;= 90)) &#123;</div><div class="line">        c = (char)(j - 13);</div><div class="line">      &#125; else if ((j &gt;= 48) &amp;&amp; (j &lt;= 57)) &#123;</div><div class="line">        c = (char)(j ^ 0x7);</div><div class="line">      &#125; else &#123;</div><div class="line">        c = (char)(j ^ 0x6);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>把这段算法逆向回去就能得到正确的flag：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">str=&apos;XRL&#125;D6hy4yfE7tuF6&#123;&apos;</div><div class="line">str1=&apos;&apos;</div><div class="line">flag=&apos;&apos;</div><div class="line">for i in range(len(str)):</div><div class="line">    if(ord(str[i])&gt;=97 and ord(str[i])&lt;=109):</div><div class="line">        str1=str1 + chr(ord(str[i])+13)</div><div class="line">    else:</div><div class="line">        str1=str1+str[i]</div><div class="line">for i in range(len(str1)):</div><div class="line">    if(ord(str1[i])&gt;=65 and ord(str1[i])&lt;=77):</div><div class="line">        flag=flag+chr(ord(str1[i])+13)</div><div class="line">    elif(ord(str1[i])&gt;=110 and ord(str1[i])&lt;=122):</div><div class="line">        flag = flag + chr(ord(str1[i]) - 13)</div><div class="line">    elif (ord(str1[i]) &gt;= 78 and ord(str1[i]) &lt;= 90):</div><div class="line">        flag = flag + chr(ord(str1[i]) - 13)</div><div class="line">    elif (ord(str1[i]) &gt;= 48 and ord(str1[i]) &lt;= 57):</div><div class="line">        flag = flag + chr(ord(str1[i]) ^ 7)</div><div class="line">    else:</div><div class="line">        flag = flag + chr(ord(str1[i]) ^ 6)</div><div class="line">print(flag)</div></pre></td></tr></table></figure>
@@ -406,11 +403,11 @@
 <p>计算出password的值后跟数组byte_6020A0数组中的值进行异或<br><img src="http://ote495tnr.bkt.clouddn.com/47.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">import os</div><div class="line">import pwn</div><div class="line">usr=&quot;&quot;</div><div class="line">pwd=&quot;&quot;</div><div class="line">flag=&quot;&quot;</div><div class="line">a = 1635017059</div><div class="line">b = 1953724780</div><div class="line">c = 1868915551</div><div class="line">usr +=pwn.p32(a)+pwn.p32(b)+pwn.p32(c)</div><div class="line">rand = [0x684749, 0x673ce537, 0x7b4505e7, 0x70a0b262, 0x33d5253c, 0x515a7675, 0x596d7d5d, 0x7cd29049, 0x59e72db6, 0x4654600d] </div><div class="line">s=[1441465642,251096121,-870437532,-944322827,647240698,638382323,282381039,-966334428,-58112612,605226810]</div><div class="line">s2=[0x42, 0x13, 0x27, 0x62, 0x41, 0x35, 0x6B, 0x0F, 0x7B, 0x46, 0x3C, 0x3E, 0x67, 0x0C, 0x08, 0x59, 0x44, 0x72, 0x36, 0x05, 0x0F, 0x15, 0x54, 0x43, 0x38, 0x17, 0x1D, 0x18, 0x08, 0x0E, 0x5C, 0x31, 0x21, 0x16, 0x02, 0x09, 0x18, 0x14, 0x54, 0x59]</div><div class="line"></div><div class="line">for i, j in enumerate(rand):</div><div class="line">    print hex(s[i])</div><div class="line">    pwd += pwn.p32(j+s[i])</div><div class="line">print &quot;pwd:&quot;, pwd</div><div class="line"></div><div class="line">for i,j in zip(pwd,s2):</div><div class="line">    flag+=chr(ord(i)^j)</div><div class="line">print &quot;flag：&quot;,flag</div></pre></td></tr></table></figure>
 <p>最后得到的结果为：ALEXCTF{1_t41d_y0u_y0u_ar3<strong>gr34t</strong>reverser__s33}</p>
--->
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfuwpwny0002f8unrahtxglj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/12/05/Reverse练习/" data-id="cjfxk3ugx0002kwuneveqwhzp" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
@@ -491,7 +488,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfuwpwoi0008f8unlzg5u438" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/10/14/一步一步学ROP之x64篇/" data-id="cjfxk3uh90006kwun2l901a2r" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -563,7 +560,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfuwpwoa0006f8unpo1apmm2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/10/12/pwntools的安装方法/" data-id="cjfxk3uhi0008kwunu8utvqmk" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安装教程/">安装教程</a></li></ul>
@@ -662,7 +659,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfuwpwol000bf8ung97zlpdb" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/28/一步一步学ROP之x86篇/" data-id="cjfxk3uhn000ckwunf1s989kv" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术文章/">技术文章</a></li></ul>
@@ -717,7 +714,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfuwpwor000hf8unhwaj4oo3" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/23/格式化字符串漏洞利用（二）/" data-id="cjfxk3uhr000hkwun584b9b0d" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn-format/">pwn,format</a></li></ul>
@@ -772,7 +769,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfuwpwop000ff8un1hl6k7by" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/09/22/格式化字符串漏洞/" data-id="cjfxk3uhq000fkwunoxriyfjo" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn，format/">pwn，format</a></li></ul>
@@ -827,7 +824,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfuwpwon000cf8unijqtyl7k" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/07/20/暑假夏令营二进制安全学习笔记/" data-id="cjfxk3uhm000bkwunkz9m9jt5" class="article-share-link">Delen</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/">Reverse</a></li></ul>
